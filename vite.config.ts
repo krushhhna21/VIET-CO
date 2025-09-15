@@ -9,20 +9,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
+  root: path.resolve(__dirname, 'client'),
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "client", "src"),  // Resolves to 'client/src' from project root
+      "@": path.resolve(__dirname, "client", "src"),
     },
   },
   build: {
-    outDir: path.resolve(__dirname, 'client', 'dist', 'public'),  // Output to 'client/dist/public'
-    emptyOutDir: true,  // Clear out directory before building
+    outDir: path.resolve(__dirname, 'dist', 'client'),
+    emptyOutDir: true,
   },
   plugins: [react()],
   server: {
     fs: {
       strict: true,
-      deny: ["**/.*"],  // Deny hidden files in file system access
+      deny: ["**/.*"],
     },
   },
 });

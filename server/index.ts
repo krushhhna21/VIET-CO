@@ -66,8 +66,13 @@ app.use((req, res, next) => {
   }
 
   // Serve static files in production
-  const staticDir = join(__dirname, 'client', 'dist');
+  const staticDir = join(__dirname, '..', 'client');
   app.use(express.static(staticDir));
+  
+  // Serve index.html for all routes (SPA fallback)
+  app.get('*', (req, res) => {
+    res.sendFile(join(staticDir, 'index.html'));
+  });
 
   // Server listening on configured port
   const port = process.env.PORT || 3000;
