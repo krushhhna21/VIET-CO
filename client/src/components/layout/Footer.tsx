@@ -19,8 +19,11 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-muted-foreground text-sm mb-6">
-              Pioneering excellence in computer science education since 1999. 
-              Shaping the future of technology through innovation and education.
+              Shri Vishweshwar Shikshan Prasarak Mandal's<br />
+              VISHWESHWARAYYA INSTITUTE OF ENGINEERING AND TECHNOLOGY<br />
+              Approved by AICTE New Delhi, Affiliated to MSBTE Mumbai.<br />
+              DTE Mumbai, Govt. of Maharashtra<br />
+              Accreditated by National Board of Accreditation, New Delhi
             </p>
             <div className="flex space-x-4">
               <a
@@ -129,16 +132,16 @@ export default function Footer() {
               <div className="flex items-start space-x-3">
                 <i className="fas fa-map-marker-alt text-muted-foreground mt-1"></i>
                 <span className="text-muted-foreground">
-                  Bangalore, Karnataka 560100
+                  Dilip Nagar, Almala Tq. Ausa Dist. Latur - 413556 (M.S.)
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <i className="fas fa-phone text-muted-foreground"></i>
-                <span className="text-muted-foreground">+91 80 2345 6789</span>
+                <span className="text-muted-foreground">9421091410, 9834288118, 9049994555, 9890990606</span>
               </div>
               <div className="flex items-center space-x-3">
                 <i className="fas fa-envelope text-muted-foreground"></i>
-                <span className="text-muted-foreground">cs.dept@viet.edu.in</span>
+                <span className="text-muted-foreground">vishpoly@gmail.com</span>
               </div>
             </div>
           </div>
@@ -146,7 +149,7 @@ export default function Footer() {
 
         <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © VertexHub 2024. All rights reserved.
+            © VIET 2024. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-muted-foreground hover:text-primary text-sm transition-colors">
