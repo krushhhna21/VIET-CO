@@ -62,20 +62,29 @@ app.use((req, res, next) => {
       serveStatic(app); // Fallback to static if Vite setup fails
     }
   } else {
-    serveStatic(app);
+    // Production static file serving
+    const clientDistDir = join(__dirname, '..', 'dist', 'client');
+    app.use(express.static(clientDistDir));
+    
+    // Health check endpoint
+    app.get('/health', (req, res) => {
+      res.status(200).json({ status: 'ok' });
+    });
+
+    // Serve the client app's index.html for all non-API routes (SPA support)
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api')) {
+        return next();
+      }
+      const indexPath = join(clientDistDir, 'index.html');
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error('Error sending index.html:', err);
+          res.status(500).send('Error loading application');
+        }
+      });
+    });
   }
-
-  // Serve static files from the client build directory
-  const clientDistDir = join(__dirname, '..', 'client', 'dist');
-  app.use(express.static(clientDistDir));
-
-  // Serve the client app's index.html for all non-API routes (SPA support)
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) {
-      return next();
-    }
-    res.sendFile(join(__dirname, '..', 'client', 'index.html'));
-  });
 
   // Server listening on configured port
   const port = parseInt(process.env.PORT || '3000', 10);
