@@ -64,25 +64,19 @@ app.use((req, res, next) => {
     }
   } else {
     // Production static file serving
-    const possibleClientDirs = [
-      join(process.cwd(), 'client', 'dist'),
-      join(__dirname, '..', 'client', 'dist'),
-      join(__dirname, '..', 'dist', 'client'),
-      join(__dirname, 'client', 'dist')
-    ];
-
-    let clientDistDir = possibleClientDirs[0];
-    for (const dir of possibleClientDirs) {
-      if (existsSync(dir)) {
-        clientDistDir = dir;
-        console.log(`Found client build directory at: ${dir}`);
-        break;
-      } else {
-        console.log(`Client build directory not found at: ${dir}`);
+    const clientDistDir = join(process.cwd(), 'dist', 'client');
+    console.log('Serving static files from:', clientDistDir);
+    
+    // Serve static files with proper MIME types
+    app.use(express.static(clientDistDir, {
+      setHeaders: (res, path) => {
+        if (path.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css');
+        }
+        // Add cache control headers
+        res.setHeader('Cache-Control', 'public, max-age=31536000');
       }
-    }
-
-    app.use(express.static(clientDistDir));
+    }));
     
     // Health check endpoint
     app.get('/health', (req, res) => {

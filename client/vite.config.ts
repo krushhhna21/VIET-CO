@@ -4,22 +4,21 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  base: '/',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    cssCodeSplit: true,
-    minify: 'esbuild',
-    sourcemap: false,
+    cssCodeSplit: false,
+    minify: true,
     rollupOptions: {
-      input: path.resolve(__dirname, 'index.html'),
       output: {
-        entryFileNames: 'assets/[name].[hash].js',
-        chunkFileNames: 'assets/[name].[hash].js',
+        manualChunks: undefined,
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name?.endsWith('.css')) return 'assets/[name].[hash][extname]';
+          if (assetInfo.name === 'style.css') return 'assets/style.[hash].css';
           return 'assets/[name].[hash][extname]';
-        }
+        },
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js'
       }
     }
   },
