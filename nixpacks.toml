@@ -11,6 +11,11 @@ cmds = ["npm run build"]
 [start]
 cmd = "npm start"
 
+[deploy]
+healthcheckPath = "/health"
+restartPolicyType = "on_failure"
+startupType = "wait"
+
 [env]
 NODE_ENV = "production"
 NODE_VERSION = "18"

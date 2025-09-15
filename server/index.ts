@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "../client/vite";
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync } from 'fs';
 
 const app = express();
 app.use(express.json());
@@ -63,12 +64,41 @@ app.use((req, res, next) => {
     }
   } else {
     // Production static file serving
-    const clientDistDir = join(__dirname, '..', 'dist', 'client');
+    const possibleClientDirs = [
+      join(__dirname, '..', 'dist', 'client'),
+      join(__dirname, '..', 'client', 'dist'),
+      join(__dirname, '..', '..', 'client', 'dist'),
+      join(__dirname, 'client', 'dist')
+    ];
+
+    let clientDistDir = possibleClientDirs[0];
+    for (const dir of possibleClientDirs) {
+      if (existsSync(dir)) {
+        clientDistDir = dir;
+        console.log(`Found client build directory at: ${dir}`);
+        break;
+      } else {
+        console.log(`Client build directory not found at: ${dir}`);
+      }
+    }
+
     app.use(express.static(clientDistDir));
     
     // Health check endpoint
     app.get('/health', (req, res) => {
       res.status(200).json({ status: 'ok' });
+    });
+
+    // Debug endpoint to check build paths
+    app.get('/debug', (req, res) => {
+      const debugInfo = {
+        __dirname,
+        clientDistDir,
+        env: process.env.NODE_ENV,
+        buildExists: existsSync(clientDistDir),
+        indexExists: existsSync(join(clientDistDir, 'index.html'))
+      };
+      res.json(debugInfo);
     });
 
     // Serve the client app's index.html for all non-API routes (SPA support)
@@ -77,6 +107,13 @@ app.use((req, res, next) => {
         return next();
       }
       const indexPath = join(clientDistDir, 'index.html');
+      console.log(`Attempting to serve index.html from: ${indexPath}`);
+      
+      if (!existsSync(indexPath)) {
+        console.error(`index.html not found at: ${indexPath}`);
+        return res.status(500).send('Application files not found');
+      }
+
       res.sendFile(indexPath, (err) => {
         if (err) {
           console.error('Error sending index.html:', err);
