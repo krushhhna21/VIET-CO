@@ -66,8 +66,8 @@ app.use((req, res, next) => {
   }
 
   // Serve static files from the client build directory
-  const clientDir = join(__dirname, '..', 'client');
-  app.use(express.static(clientDir));
+  const clientDistDir = join(__dirname, '..', 'client', 'dist');
+  app.use(express.static(clientDistDir));
 
   // Serve the client app's index.html for all non-API routes (SPA support)
   app.get('*', (req, res, next) => {
@@ -78,8 +78,9 @@ app.use((req, res, next) => {
   });
 
   // Server listening on configured port
-  const port = process.env.PORT || 3000;
-  server.listen(port, () => {
-    log(`Serving on port ${port}`);
+  const port = parseInt(process.env.PORT || '3000', 10);
+  const host = process.env.HOST || '0.0.0.0';
+  server.listen(port, host, () => {
+    log(`Server listening on ${host}:${port}`);
   });
 })();
