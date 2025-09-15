@@ -10,9 +10,13 @@ export default function Footer() {
             <Link href="/">
               <div className="flex items-center space-x-3 mb-6 cursor-pointer">
                 <img 
-                  src="/src/assets/logo.png" 
+                  src="/logo.png" 
                   alt="VIET Logo" 
                   className="w-16 h-16 object-contain"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    console.log('Error loading logo');
+                  }}
                 />
                 <div>
                   <h3 className="font-bold text-foreground">VIET</h3>

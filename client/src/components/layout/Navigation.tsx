@@ -35,9 +35,13 @@ export default function Navigation() {
           <Link href="/" data-testid="logo-link">
             <div className="flex items-center space-x-4 cursor-pointer">
               <img 
-                src="/src/assets/logo.png" 
+                src="/logo.png" 
                 alt="VIET Logo" 
                 className="w-16 h-16 object-contain"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  console.log('Error loading logo');
+                }}
               />
               <div>
                 <h1 className="text-lg font-semibold text-foreground">VIET</h1>

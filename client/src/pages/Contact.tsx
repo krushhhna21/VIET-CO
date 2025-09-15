@@ -65,19 +65,19 @@ export default function Contact() {
       title: 'Address',
       content: [
         'Vishweshwarayya Institute of Engineering & Technology',
-        'Computer Science Department',
-        'Bangalore, Karnataka 560100'
+        'Computer Engineering Department',
+        'Almala, Tq. Ausa, Latur - 413520',
       ]
     },
     {
       icon: Phone,
       title: 'Phone',
-      content: ['+91 80 2345 6789', '+91 80 2345 6790']
+      content: ['9421096789', '9421096790']
     },
     {
       icon: Mail,
       title: 'Email',
-      content: ['cs.dept@viet.edu.in', 'admissions@viet.edu.in']
+      content: ['vishpoly@gmail.com']
     },
     {
       icon: Clock,
