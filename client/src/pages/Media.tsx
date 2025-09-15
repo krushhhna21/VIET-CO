@@ -13,7 +13,7 @@ export default function Media() {
   const [selectedMediaType, setSelectedMediaType] = useState<string>('all');
 
   const { data: media, isLoading } = useQuery<Media[]>({
-    queryKey: ['/api/media', { published: true }],
+    queryKey: ['/api/media?published=true'],
   });
 
   const categories = ['all', 'Events', 'Workshops', 'Campus Life', 'Awards', 'Faculty'];

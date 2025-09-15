@@ -31,11 +31,11 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
 
   // Fetch dashboard statistics
-  const { data: newsData } = useQuery({ queryKey: ['/api/news'] });
-  const { data: eventsData } = useQuery({ queryKey: ['/api/events'] });
-  const { data: notesData } = useQuery({ queryKey: ['/api/notes'] });
-  const { data: mediaData } = useQuery({ queryKey: ['/api/media'] });
-  const { data: contactsData } = useQuery({ queryKey: ['/api/contacts'] });
+  const { data: newsData } = useQuery<any[]>({ queryKey: ['/api/news'] });
+  const { data: eventsData } = useQuery<any[]>({ queryKey: ['/api/events'] });
+  const { data: notesData } = useQuery<any[]>({ queryKey: ['/api/notes'] });
+  const { data: mediaData } = useQuery<any[]>({ queryKey: ['/api/media'] });
+  const { data: contactsData } = useQuery<any[]>({ queryKey: ['/api/contacts'] });
 
   const stats: DashboardStats = {
     newsCount: newsData?.length || 0,
@@ -198,12 +198,41 @@ export default function AdminDashboard() {
               <CardTitle>Contact Messages</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">
-                  Contact messages will be displayed here. Total messages: {stats.contactsCount}
-                </p>
-              </div>
+              {contactsData && contactsData.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-left border">
+                    <thead>
+                      <tr className="bg-muted">
+                        <th className="px-4 py-2">Name</th>
+                        <th className="px-4 py-2">Email</th>
+                        <th className="px-4 py-2">Subject</th>
+                        <th className="px-4 py-2">Message</th>
+                        <th className="px-4 py-2">Status</th>
+                        <th className="px-4 py-2">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {contactsData.map((contact: any) => (
+                        <tr key={contact.id} className="border-b">
+                          <td className="px-4 py-2">{contact.name}</td>
+                          <td className="px-4 py-2">{contact.email}</td>
+                          <td className="px-4 py-2">{contact.subject}</td>
+                          <td className="px-4 py-2 max-w-xs truncate" title={contact.message}>{contact.message}</td>
+                          <td className="px-4 py-2">{contact.status}</td>
+                          <td className="px-4 py-2">{contact.createdAt ? new Date(contact.createdAt).toLocaleString() : ''}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">
+                    No contact messages found.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

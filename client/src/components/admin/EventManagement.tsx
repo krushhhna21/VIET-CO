@@ -1,3 +1,14 @@
+// Helper to convert DD-MM-YYYY to ISO string
+function toISODate(dateStr: string) {
+  if (!dateStr) return "";
+  const [day, month, year] = dateStr.split("-");
+  if (year && month && day && dateStr.includes("-")) {
+    const iso = new Date(`${year}-${month}-${day}`);
+    return isNaN(iso.getTime()) ? "" : iso.toISOString();
+  }
+  const iso = new Date(dateStr);
+  return isNaN(iso.getTime()) ? "" : iso.toISOString();
+}
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,12 +21,27 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Edit, Trash2, Calendar } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
-import type { Event, InsertEvent } from '@shared/schema';
+import type { Event } from '@shared/schema';
+
+// Local type for form and API payload (dates as strings)
+type EventFormData = {
+  title: string;
+  description: string;
+  location?: string;
+  eventDate: string;
+  endDate?: string;
+  time?: string;
+  category: string;
+  image?: string;
+  registrationRequired?: boolean;
+  maxParticipants?: number;
+  published?: boolean;
+};
 
 export default function EventManagement() {
   const [isCreating, setIsCreating] = useState(false);
   const [editingItem, setEditingItem] = useState<Event | null>(null);
-  const [formData, setFormData] = useState<Partial<InsertEvent>>({
+  const [formData, setFormData] = useState<EventFormData>({
     title: '',
     description: '',
     location: '',
@@ -26,7 +52,7 @@ export default function EventManagement() {
     image: '',
     registrationRequired: false,
     maxParticipants: undefined,
-    published: false,
+    published: true, // Default to published
   });
 
   const { toast } = useToast();
@@ -37,27 +63,31 @@ export default function EventManagement() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: InsertEvent) => apiRequest('POST', '/api/events', data),
+    mutationFn: (data: EventFormData) => apiRequest('POST', '/api/events', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/events'] });
       toast({ title: 'Event created successfully' });
       resetForm();
+      createMutation.reset();
     },
     onError: () => {
       toast({ title: 'Failed to create event', variant: 'destructive' });
+      createMutation.reset();
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<InsertEvent> }) =>
+    mutationFn: ({ id, data }: { id: string; data: EventFormData }) =>
       apiRequest('PUT', `/api/events/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/events'] });
       toast({ title: 'Event updated successfully' });
       resetForm();
+      updateMutation.reset();
     },
     onError: () => {
       toast({ title: 'Failed to update event', variant: 'destructive' });
+      updateMutation.reset();
     },
   });
 
@@ -84,10 +114,12 @@ export default function EventManagement() {
       image: '',
       registrationRequired: false,
       maxParticipants: undefined,
-      published: false,
+      published: true, // Default to published
     });
     setIsCreating(false);
     setEditingItem(null);
+    createMutation.reset();
+    updateMutation.reset();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -98,15 +130,16 @@ export default function EventManagement() {
       return;
     }
 
-    const eventData: InsertEvent = {
+    // Convert eventDate and endDate to Date objects if present
+    const eventData: any = {
       title: formData.title,
       description: formData.description,
-      location: formData.location || undefined,
-      eventDate: new Date(formData.eventDate).toISOString(),
-      endDate: formData.endDate ? new Date(formData.endDate).toISOString() : undefined,
-      time: formData.time || undefined,
+      location: formData.location || '',
+      eventDate: formData.eventDate ? new Date(formData.eventDate) : undefined,
+      endDate: formData.endDate ? new Date(formData.endDate) : undefined,
+      time: formData.time || '',
       category: formData.category,
-      image: formData.image || undefined,
+      image: formData.image || '',
       registrationRequired: formData.registrationRequired || false,
       maxParticipants: formData.maxParticipants || undefined,
       published: formData.published || false,
@@ -130,9 +163,9 @@ export default function EventManagement() {
       time: item.time || '',
       category: item.category,
       image: item.image || '',
-      registrationRequired: item.registrationRequired,
+      registrationRequired: !!item.registrationRequired,
       maxParticipants: item.maxParticipants || undefined,
-      published: item.published,
+      published: !!item.published,
     });
     setIsCreating(true);
   };

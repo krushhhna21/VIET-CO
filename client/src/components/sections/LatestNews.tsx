@@ -8,7 +8,7 @@ import type { News } from "@shared/schema";
 
 export default function LatestNews() {
   const { data: news, isLoading } = useQuery<News[]>({
-    queryKey: ['/api/news', { published: true }],
+    queryKey: ['/api/news?published=true'],
   });
 
   if (isLoading) {

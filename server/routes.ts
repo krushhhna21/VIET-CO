@@ -280,6 +280,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/events", authenticateAdmin, async (req: Request, res: Response) => {
+    // Log the entire request body and types for debugging
+    console.log('RAW req.body:', req.body);
+    if (req.body) {
+      Object.entries(req.body).forEach(([k, v]) => {
+        console.log(`  ${k}:`, v, typeof v);
+      });
+    }
     try {
       const eventData = insertEventSchema.parse(req.body);
       const event = await storage.createEvent(eventData);

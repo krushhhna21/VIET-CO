@@ -129,11 +129,26 @@ export const insertNewsSchema = createInsertSchema(news).omit({
   updatedAt: true,
 });
 
-export const insertEventSchema = createInsertSchema(events).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+export const insertEventSchema = createInsertSchema(events)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    eventDate: z.preprocess(
+      (val) => (typeof val === 'string' ? new Date(val) : val),
+      z.date({ required_error: 'eventDate is required' })
+    ),
+    endDate: z.preprocess(
+      (val) => {
+        if (val === null || val === undefined || val === "") return undefined;
+        if (typeof val === 'string') return new Date(val);
+        return val;
+      },
+      z.date().optional()
+    ),
+  });
 
 export const insertNoteSchema = createInsertSchema(notes).omit({
   id: true,
