@@ -69,9 +69,13 @@ app.use((req, res, next) => {
   const staticDir = join(__dirname, '..', 'client');
   app.use(express.static(staticDir));
   
-  // Serve index.html for all routes (SPA fallback)
-  app.get('*', (req, res) => {
-    res.sendFile(join(staticDir, 'index.html'));
+  // Handle SPA routing - serve index.html for all non-API routes
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      next();
+    } else {
+      res.sendFile(join(__dirname, '..', 'dist', 'client', 'index.html'));
+    }
   });
 
   // Server listening on configured port
