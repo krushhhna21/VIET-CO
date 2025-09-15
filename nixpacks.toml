@@ -11,9 +11,6 @@ cmds = ["npm run build"]
 [start]
 cmd = "npm start"
 
-[phases.setup.env]
+[env]
 NODE_ENV = "production"
-
-[[phases.build.dependsOn]]
-runtime = "nodejs"
-version = "18"
+NODE_VERSION = "18"
