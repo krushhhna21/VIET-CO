@@ -3,14 +3,12 @@ import type { Config } from "tailwindcss";
 export default {
   darkMode: ["class"],
   content: [
-    "./client/index.html",
-    "./client/src/**/*.{ts,tsx}",
-    "./client/src/components/**/*.{ts,tsx}",
-    "./client/src/pages/**/*.{ts,tsx}",
-    "./client/src/sections/**/*.{ts,tsx}",
-    "./client/src/App.tsx",
-    "./client/src/main.tsx"
+    "./client/src/**/*.{js,jsx,ts,tsx}",
+    "./client/index.html"
   ],
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       borderRadius: {

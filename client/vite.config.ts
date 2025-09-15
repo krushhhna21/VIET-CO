@@ -4,18 +4,20 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  root: './',
+  base: './',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    cssCodeSplit: false,
+    cssCodeSplit: true,
+    minify: 'esbuild',
+    sourcemap: false,
     rollupOptions: {
       input: path.resolve(__dirname, 'index.html'),
       output: {
         entryFileNames: 'assets/[name].[hash].js',
         chunkFileNames: 'assets/[name].[hash].js',
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'index.css') return 'assets/index.[hash].css';
+          if (assetInfo.name?.endsWith('.css')) return 'assets/[name].[hash][extname]';
           return 'assets/[name].[hash][extname]';
         }
       }

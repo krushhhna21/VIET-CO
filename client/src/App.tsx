@@ -35,9 +35,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen bg-background text-foreground font-sans scroll-smooth">
+        <div className="min-h-screen bg-background text-foreground font-sans antialiased scroll-smooth selection:bg-primary selection:text-primary-foreground">
           <Navigation />
-          <main>
+          <main className="relative">
             <Router />
           </main>
           <Footer />
