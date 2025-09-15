@@ -12,13 +12,7 @@ export default defineConfig({
     minify: true,
     rollupOptions: {
       output: {
-        manualChunks: undefined,
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'style.css') return 'assets/style.[hash].css';
-          return 'assets/[name].[hash][extname]';
-        },
-        chunkFileNames: 'assets/[name].[hash].js',
-        entryFileNames: 'assets/[name].[hash].js'
+        manualChunks: undefined
       }
     }
   },

@@ -57,16 +57,6 @@ export default {
           "4": "var(--chart-4)",
           "5": "var(--chart-5)",
         },
-        sidebar: {
-          DEFAULT: "var(--sidebar-background)",
-          foreground: "var(--sidebar-foreground)",
-          primary: "var(--sidebar-primary)",
-          "primary-foreground": "var(--sidebar-primary-foreground)",
-          accent: "var(--sidebar-accent)",
-          "accent-foreground": "var(--sidebar-accent-foreground)",
-          border: "var(--sidebar-border)",
-          ring: "var(--sidebar-ring)",
-        },
       },
       fontFamily: {
         sans: ["var(--font-sans)"],
@@ -75,43 +65,17 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
-        },
-        bounce: {
-          "0%, 20%, 53%, 80%, 100%": {
-            "animation-timing-function": "cubic-bezier(0.215, 0.610, 0.355, 1.000)",
-            transform: "translate3d(0,0,0)",
-          },
-          "40%, 43%": {
-            "animation-timing-function": "cubic-bezier(0.755, 0.050, 0.855, 0.060)",
-            transform: "translate3d(0, -30px, 0)",
-          },
-          "70%": {
-            "animation-timing-function": "cubic-bezier(0.755, 0.050, 0.855, 0.060)",
-            transform: "translate3d(0, -15px, 0)",
-          },
-          "90%": {
-            transform: "translate3d(0,-4px,0)",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        bounce: "bounce 2s infinite",
       },
     },
   },

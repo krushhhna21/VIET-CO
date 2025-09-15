@@ -5,11 +5,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development DEBUG=* tsx server/index.ts",
-    "build": "npm run clean && npm run build:client && npm run build:server",
+    "build": "npm run clean && npm run build:client && npm run build:server && npm run copy-client",
     "clean": "rimraf dist",
     "build:client": "cd client && cross-env NODE_ENV=production vite build",
     "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist/server",
-    "postbuild": "powershell -Command \"New-Item -ItemType Directory -Force -Path dist/client; Copy-Item -Path client/dist/* -Destination dist/client -Recurse -Force\"",
+    "copy-client": "mkdir -p dist/client && cp -r client/dist/* dist/client/",
     "start": "npm run db:push && node dist/server/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push:pg"
