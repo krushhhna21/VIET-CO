@@ -12,9 +12,11 @@ cmds = ["npm run build"]
 cmd = "npm start"
 
 [deploy]
-healthcheckPath = "/health"
+healthcheckPath = "/debug"
 restartPolicyType = "on_failure"
 startupType = "wait"
+healthcheckTimeout = 10
+restartLimit = 3
 
 [env]
 NODE_ENV = "production"

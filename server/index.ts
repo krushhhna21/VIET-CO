@@ -65,9 +65,9 @@ app.use((req, res, next) => {
   } else {
     // Production static file serving
     const possibleClientDirs = [
-      join(__dirname, '..', 'dist', 'client'),
+      join(process.cwd(), 'client', 'dist'),
       join(__dirname, '..', 'client', 'dist'),
-      join(__dirname, '..', '..', 'client', 'dist'),
+      join(__dirname, '..', 'dist', 'client'),
       join(__dirname, 'client', 'dist')
     ];
 
