@@ -9,21 +9,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  root: 'client',
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "client/src"),
-    },
-  },
-  build: {
-    outDir: '../dist/client',
-    emptyOutDir: true,
-  },
   plugins: [react()],
-  server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
-    },
-  },
+  build: {
+    outDir: 'dist/client',
+    emptyOutDir: true
+  }
 });

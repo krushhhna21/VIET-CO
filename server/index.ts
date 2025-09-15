@@ -65,17 +65,16 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Serve static files in production
-  const staticDir = join(__dirname, '..', 'client');
-  app.use(express.static(staticDir));
-  
-  // Handle SPA routing - serve index.html for all non-API routes
+  // Serve static files from the client build directory
+  const clientDir = join(__dirname, '..', 'client');
+  app.use(express.static(clientDir));
+
+  // Serve the client app's index.html for all non-API routes (SPA support)
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) {
-      next();
-    } else {
-      res.sendFile(join(__dirname, '..', 'dist', 'client', 'index.html'));
+      return next();
     }
+    res.sendFile(join(__dirname, '..', 'client', 'index.html'));
   });
 
   // Server listening on configured port
