@@ -3,16 +3,17 @@ nixPkgs = ["nodejs_18", "openssl"]
 aptPkgs = ["build-essential"]
 
 [phases.install]
-cmds = ["npm install --omit=dev"]
+cmds = ["npm install"]
 
 [phases.build]
-cmds = [
-    "chmod +x build.sh",
-    "./build.sh"
-]
+cmds = ["npm run build"]
 
 [start]
 cmd = "npm start"
 
 [phases.setup.env]
 NODE_ENV = "production"
+
+[[phases.build.dependsOn]]
+runtime = "nodejs"
+version = "18"
