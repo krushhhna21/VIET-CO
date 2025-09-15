@@ -8,7 +8,8 @@ export default {
     "./client/src/components/**/*.{ts,tsx}",
     "./client/src/pages/**/*.{ts,tsx}",
     "./client/src/sections/**/*.{ts,tsx}",
-    "./client/src/app.tsx"
+    "./client/src/App.tsx",
+    "./client/src/main.tsx"
   ],
   theme: {
     extend: {
