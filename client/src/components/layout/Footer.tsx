@@ -9,9 +9,11 @@ export default function Footer() {
           <div>
             <Link href="/">
               <div className="flex items-center space-x-3 mb-6 cursor-pointer">
-                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                  <i className="fas fa-graduation-cap text-primary-foreground text-lg"></i>
-                </div>
+                <img 
+                  src="/src/assets/logo.png" 
+                  alt="VIET Logo" 
+                  className="w-16 h-16 object-contain"
+                />
                 <div>
                   <h3 className="font-bold text-foreground">VIET</h3>
                   <p className="text-xs text-muted-foreground">Computer Department</p>

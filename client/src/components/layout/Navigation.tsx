@@ -34,9 +34,11 @@ export default function Navigation() {
           {/* Logo */}
           <Link href="/" data-testid="logo-link">
             <div className="flex items-center space-x-4 cursor-pointer">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <i className="fas fa-graduation-cap text-primary-foreground text-lg"></i>
-              </div>
+              <img 
+                src="/src/assets/logo.png" 
+                alt="VIET Logo" 
+                className="w-16 h-16 object-contain"
+              />
               <div>
                 <h1 className="text-lg font-semibold text-foreground">VIET</h1>
                 <p className="text-xs text-muted-foreground">Computer Department</p>
