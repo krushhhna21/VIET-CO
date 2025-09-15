@@ -4,24 +4,18 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  root: './client',
-  publicDir: 'public',
   build: {
-    outDir: '../dist',
+    outDir: 'dist',
     emptyOutDir: true,
-    minify: true,
-    cssMinify: true,
+    sourcemap: true,
     rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
-      },
+      input: './index.html',
       output: {
-        manualChunks: undefined,
-        assetFileNames: 'assets/[name].[hash][extname]',
-        chunkFileNames: 'assets/[name].[hash].js',
         entryFileNames: 'assets/[name].[hash].js',
-      },
-    },
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash][extname]'
+      }
+    }
   },
   server: {
     port: 5173,
