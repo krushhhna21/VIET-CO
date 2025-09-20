@@ -34,6 +34,7 @@ export default function HeroSection() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg"
+            onClick={scrollToContent}
             className="gold-gradient text-accent-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-lg transition-all hover-lift"
             data-testid="explore-programs-button"
           >

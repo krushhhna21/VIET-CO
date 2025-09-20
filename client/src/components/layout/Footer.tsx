@@ -13,10 +13,14 @@ export default function Footer() {
                   src="/logo.png" 
                   alt="VIET Logo" 
                   className="w-16 h-16 object-contain"
+                  loading="eager"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
-                    console.log('Error loading logo');
+                    console.error('Error loading logo:', e);
+                    // Try with relative path
+                    e.currentTarget.src = 'public/logo.png';
                   }}
+                  onLoad={() => console.log('Logo loaded successfully')}
                 />
                 <div>
                   <h3 className="font-bold text-foreground">VIET</h3>

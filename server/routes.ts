@@ -116,6 +116,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Special route for creating the admin user
+  app.post("/api/setup-admin", async (_req: Request, res: Response) => {
+    try {
+      const hashedPassword = await bcrypt.hash("VIET@CO1095", 10);
+      const adminData = {
+        username: "HOD@CO",
+        email: "hod.computer@viet.edu",
+        password: hashedPassword,
+        role: "admin" as const
+      };
+      
+      // Try to create admin user
+      const user = await storage.createUser(adminData);
+      
+      res.status(201).json({ 
+        message: "Admin user created successfully",
+        user: { 
+          id: user.id, 
+          username: user.username, 
+          email: user.email, 
+          role: user.role 
+        }
+      });
+    } catch (error) {
+      console.error("Admin creation error:", error);
+      res.status(500).json({ message: "Error creating admin user" });
+    }
+  });
+
   // Faculty routes
   app.get("/api/faculty", async (req: Request, res: Response) => {
     try {
