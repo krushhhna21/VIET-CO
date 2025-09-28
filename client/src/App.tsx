@@ -14,6 +14,7 @@ import Media from "@/pages/Media";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
+import { useEffect } from "react";
 
 function Router() {
   return (
@@ -32,10 +33,15 @@ function Router() {
 }
 
 function App() {
+  // Set dark theme as default
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen bg-background text-foreground font-sans antialiased scroll-smooth selection:bg-primary selection:text-primary-foreground">
+        <div className="min-h-screen bg-background text-foreground font-sans antialiased scroll-smooth selection:bg-primary/20 selection:text-primary-foreground">
           <Navigation />
           <main className="relative">
             <Router />
