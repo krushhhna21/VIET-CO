@@ -11,12 +11,12 @@ export default function HeroSection() {
 
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden" data-testid="hero-section">
-      {/* Premium 4K Background with Gradient Overlay */}
+      {/* Premium 4K Background with College Image */}
       <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
            style={{
-             backgroundImage: "url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2844&q=80')"
+             backgroundImage: "url('/viet-college.png')"
            }}>
-        <div className="absolute inset-0 hero-gradient opacity-90"></div>
+        <div className="absolute inset-0 hero-gradient opacity-75"></div>
         {/* Animated Background Elements */}
         <div className="absolute top-20 left-10 w-2 h-2 bg-primary rounded-full animate-float"></div>
         <div className="absolute top-40 right-20 w-3 h-3 bg-accent rounded-full animate-float" style={{animationDelay: '1s'}}></div>
