@@ -13,12 +13,20 @@ const authenticateToken = (req: Request, res: Response, next: any) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
+  console.log('authenticateToken - Auth header:', authHeader);
+  console.log('authenticateToken - Token:', token ? 'Present' : 'Missing');
+
   if (!token) {
+    console.log('authenticateToken - No token provided');
     return res.status(401).json({ message: "Access token required" });
   }
 
   jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-    if (err) return res.status(403).json({ message: "Invalid or expired token" });
+    if (err) {
+      console.log('authenticateToken - JWT verify error:', err.message);
+      return res.status(403).json({ message: "Invalid or expired token" });
+    }
+    console.log('authenticateToken - JWT verify success, user:', user);
     (req as any).user = user;
     next();
   });
@@ -27,9 +35,15 @@ const authenticateToken = (req: Request, res: Response, next: any) => {
 // Middleware for admin authentication
 const authenticateAdmin = (req: Request, res: Response, next: any) => {
   authenticateToken(req, res, () => {
-    if ((req as any).user.role !== 'admin') {
+    const user = (req as any).user;
+    console.log('authenticateAdmin - User role:', user?.role);
+    
+    if (user?.role !== 'admin') {
+      console.log('authenticateAdmin - Access denied, not admin');
       return res.status(403).json({ message: "Admin access required" });
     }
+    
+    console.log('authenticateAdmin - Admin access granted');
     next();
   });
 };
@@ -47,12 +61,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/hero-slides", authenticateAdmin, async (req: Request, res: Response) => {
+    console.log('POST /api/hero-slides - Request body:', req.body);
+    console.log('POST /api/hero-slides - User from token:', (req as any).user);
+    
     try {
       const slideData = insertHeroSlideSchema.parse(req.body);
+      console.log('POST /api/hero-slides - Parsed slide data:', slideData);
+      
       const slide = await storage.createHeroSlide(slideData);
+      console.log('POST /api/hero-slides - Created slide:', slide);
+      
       res.status(201).json(slide);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.log('POST /api/hero-slides - Validation error:', error.errors);
         return res.status(400).json({ message: "Invalid input", errors: error.errors });
       }
       console.error("Create hero slide error:", error);

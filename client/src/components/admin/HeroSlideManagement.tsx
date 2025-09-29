@@ -80,11 +80,18 @@ export default function HeroSlideManagement() {
 
   // Helper function to handle authentication errors
   const handleAuthError = (error: any, response?: Response) => {
-    // Only logout on actual authentication/authorization failures
-    if ((response?.status === 401 || response?.status === 403) && 
-        (error.message?.includes('Invalid or expired token') || 
-         error.message?.includes('Access token required') ||
-         error.message?.includes('Admin access required'))) {
+    console.log('Error details:', { error, response, status: response?.status });
+    
+    // Only logout on specific authentication failures with exact error messages
+    const isAuthError = response?.status === 401 || response?.status === 403;
+    const hasAuthMessage = error.message?.includes('Invalid or expired token') || 
+                          error.message?.includes('Access token required') ||
+                          error.message?.includes('Admin access required');
+    
+    // Log for debugging
+    console.log('Auth error check:', { isAuthError, hasAuthMessage, errorMessage: error.message });
+    
+    if (isAuthError && hasAuthMessage) {
       toast({
         title: "Session Expired",
         description: "Your session has expired. Please log in again.",
@@ -93,6 +100,8 @@ export default function HeroSlideManagement() {
       logout();
       return true; // Indicate that we handled the auth error
     }
+    
+    // Don't logout for other types of errors
     return false; // Not an auth error
   };
 
