@@ -14,11 +14,11 @@ const authenticateToken = (req: Request, res: Response, next: any) => {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.sendStatus(401);
+    return res.status(401).json({ message: "Access token required" });
   }
 
   jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-    if (err) return res.sendStatus(403);
+    if (err) return res.status(403).json({ message: "Invalid or expired token" });
     (req as any).user = user;
     next();
   });
@@ -28,7 +28,7 @@ const authenticateToken = (req: Request, res: Response, next: any) => {
 const authenticateAdmin = (req: Request, res: Response, next: any) => {
   authenticateToken(req, res, () => {
     if ((req as any).user.role !== 'admin') {
-      return res.sendStatus(403);
+      return res.status(403).json({ message: "Admin access required" });
     }
     next();
   });
