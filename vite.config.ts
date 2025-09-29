@@ -14,5 +14,10 @@ export default defineConfig({
     outDir: 'dist/client',
     emptyOutDir: true
   },
-  root: './client'
+  root: './client',
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'client/src')
+    }
+  }
 });

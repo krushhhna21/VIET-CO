@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Plus,
   Edit,
@@ -73,6 +74,7 @@ export default function HeroSlideManagement() {
   });
 
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Fetch hero slides
   const { data: slides, isLoading } = useQuery<HeroSlide[]>({
@@ -91,13 +93,28 @@ export default function HeroSlideManagement() {
         },
         body: JSON.stringify(slideData),
       });
-      if (!response.ok) throw new Error('Failed to create slide');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create slide');
+      }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/hero-slides'] });
       setIsDialogOpen(false);
       resetForm();
+      toast({
+        title: "Success!",
+        description: `Hero slide "${data.title}" has been created successfully.`,
+        variant: "default",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create hero slide. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -113,14 +130,29 @@ export default function HeroSlideManagement() {
         },
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error('Failed to update slide');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update slide');
+      }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/hero-slides'] });
       setIsDialogOpen(false);
       resetForm();
       setEditingSlide(null);
+      toast({
+        title: "Success!",
+        description: `Hero slide "${data.title}" has been updated successfully.`,
+        variant: "default",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update hero slide. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -134,11 +166,26 @@ export default function HeroSlideManagement() {
           'Authorization': `Bearer ${token}`,
         },
       });
-      if (!response.ok) throw new Error('Failed to delete slide');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete slide');
+      }
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/hero-slides'] });
+      toast({
+        title: "Success!",
+        description: "Hero slide has been deleted successfully.",
+        variant: "default",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete hero slide. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -157,8 +204,14 @@ export default function HeroSlideManagement() {
       description: '',
       type: 'main',
       isActive: true,
-      order: 1,
+      order: slides ? slides.length + 1 : 1,
     });
+  };
+
+  const openCreateDialog = () => {
+    resetForm();
+    setEditingSlide(null);
+    setIsDialogOpen(true);
   };
 
   const handleEdit = (slide: HeroSlide) => {
@@ -176,6 +229,9 @@ export default function HeroSlideManagement() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted with data:', formData);
+    console.log('Is editing?', !!editingSlide);
+    
     if (editingSlide) {
       updateSlideMutation.mutate({
         id: editingSlide.id,
@@ -211,7 +267,7 @@ export default function HeroSlideManagement() {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => handleDialogClose()}>
+            <Button onClick={openCreateDialog}>
               <Plus className="h-4 w-4 mr-2" />
               Add Slide
             </Button>
@@ -312,7 +368,10 @@ export default function HeroSlideManagement() {
                   type="submit"
                   disabled={createSlideMutation.isPending || updateSlideMutation.isPending}
                 >
-                  {editingSlide ? 'Update Slide' : 'Create Slide'}
+                  {createSlideMutation.isPending || updateSlideMutation.isPending 
+                    ? (editingSlide ? 'Updating...' : 'Creating...') 
+                    : (editingSlide ? 'Update Slide' : 'Create Slide')
+                  }
                 </Button>
               </div>
             </form>
@@ -402,7 +461,7 @@ export default function HeroSlideManagement() {
               </p>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button>
+                  <Button onClick={openCreateDialog}>
                     <Plus className="h-4 w-4 mr-2" />
                     Create First Slide
                   </Button>
