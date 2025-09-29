@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 import { 
   Plus,
   Edit,
@@ -75,6 +76,20 @@ export default function HeroSlideManagement() {
 
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { logout } = useAuth();
+
+  // Helper function to handle authentication errors
+  const handleAuthError = (error: any, response?: Response) => {
+    if (response?.status === 401 || response?.status === 403 || 
+        error.message?.includes('token') || error.message?.includes('auth')) {
+      toast({
+        title: "Session Expired",
+        description: "Your session has expired. Please log in again.",
+        variant: "destructive",
+      });
+      logout();
+    }
+  };
 
   // Fetch hero slides
   const { data: slides, isLoading } = useQuery<HeroSlide[]>({
@@ -95,7 +110,9 @@ export default function HeroSlideManagement() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create slide');
+        const error = new Error(errorData.message || 'Failed to create slide');
+        (error as any).response = response;
+        throw error;
       }
       return response.json();
     },
@@ -110,11 +127,14 @@ export default function HeroSlideManagement() {
       });
     },
     onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create hero slide. Please try again.",
-        variant: "destructive",
-      });
+      handleAuthError(error, error.response);
+      if (error.response?.status !== 401 && error.response?.status !== 403) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to create hero slide. Please try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -132,7 +152,9 @@ export default function HeroSlideManagement() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update slide');
+        const error = new Error(errorData.message || 'Failed to update slide');
+        (error as any).response = response;
+        throw error;
       }
       return response.json();
     },
@@ -148,11 +170,14 @@ export default function HeroSlideManagement() {
       });
     },
     onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update hero slide. Please try again.",
-        variant: "destructive",
-      });
+      handleAuthError(error, error.response);
+      if (error.response?.status !== 401 && error.response?.status !== 403) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to update hero slide. Please try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -168,7 +193,9 @@ export default function HeroSlideManagement() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete slide');
+        const error = new Error(errorData.message || 'Failed to delete slide');
+        (error as any).response = response;
+        throw error;
       }
       return response.json();
     },
@@ -181,11 +208,14 @@ export default function HeroSlideManagement() {
       });
     },
     onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete hero slide. Please try again.",
-        variant: "destructive",
-      });
+      handleAuthError(error, error.response);
+      if (error.response?.status !== 401 && error.response?.status !== 403) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to delete hero slide. Please try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
