@@ -1,24 +1,38 @@
 import { useAuth } from '@/hooks/use-auth';
+import { useEffect, useState } from 'react';
 import AdminLogin from '@/components/admin/AdminLogin';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Shield, ArrowLeft } from 'lucide-react';
 import { Link } from 'wouter';
 
 export default function Admin() {
   const { user, isLoading, isAuthenticated, isAdmin } = useAuth();
+  const [mounted, setMounted] = useState(false);
 
-  // Loading state
+  // Ensure component is mounted before showing content
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Don't render anything until mounted (prevents hydration issues)
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted">
+        <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
+
+  // Loading state - show for a shorter time to avoid flickering
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted" data-testid="admin-loading">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
-            <Skeleton className="w-12 h-12 rounded-lg mx-auto mb-4" />
-            <Skeleton className="h-6 w-32 mx-auto mb-2" />
-            <Skeleton className="h-4 w-48 mx-auto" />
+            <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Checking authentication...</p>
           </CardContent>
         </Card>
       </div>

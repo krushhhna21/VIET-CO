@@ -1,18 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Shield } from 'lucide-react';
+import { Shield, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import { useLocation } from 'wouter';
 
 export default function AdminLogin() {
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
   });
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
-  const { login, loginLoading } = useAuth();
+  const { login, loginLoading, user, isAuthenticated } = useAuth();
+  const [, setLocation] = useLocation();
+
+  // Handle successful login redirect
+  useEffect(() => {
+    if (isAuthenticated && user?.role === 'admin' && !loginLoading) {
+      setLoginSuccess(true);
+      
+      // Multiple redirect attempts for reliability
+      const redirectTimer = setTimeout(() => {
+        setLocation('/admin');
+      }, 500);
+
+      // Fallback redirect
+      const fallbackTimer = setTimeout(() => {
+        if (window.location.pathname !== '/admin') {
+          window.location.href = '/admin';
+        }
+      }, 1500);
+
+      return () => {
+        clearTimeout(redirectTimer);
+        clearTimeout(fallbackTimer);
+      };
+    }
+  }, [isAuthenticated, user, loginLoading, setLocation]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +52,24 @@ export default function AdminLogin() {
   const handleInputChange = (field: 'username' | 'password', value: string) => {
     setCredentials(prev => ({ ...prev, [field]: value }));
   };
+
+  // Show success state briefly before redirect
+  if (loginSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted py-12 px-4 sm:px-6 lg:px-8">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-8 text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="text-green-600 h-8 w-8" />
+            </div>
+            <h2 className="text-xl font-semibold mb-2">Login Successful!</h2>
+            <p className="text-muted-foreground mb-4">Redirecting to admin dashboard...</p>
+            <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto"></div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted py-12 px-4 sm:px-6 lg:px-8" data-testid="admin-login">

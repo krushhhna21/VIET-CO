@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
+import ScrollToTop from "@/components/layout/ScrollToTop";
+import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import News from "@/pages/News";
@@ -42,11 +44,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="min-h-screen bg-background text-foreground font-sans antialiased scroll-smooth selection:bg-primary/20 selection:text-primary-foreground">
+          <ScrollToTop />
           <Navigation />
           <main className="relative">
             <Router />
           </main>
           <Footer />
+          <ScrollToTopButton />
           <Toaster />
         </div>
       </TooltipProvider>

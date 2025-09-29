@@ -308,3 +308,47 @@
     opacity: .5;
   }
 }
+
+/* Virtual Tour Styles */
+@keyframes tour-progress {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+.tour-progress-bar {
+  transform-origin: left center;
+  animation: tour-progress 0.5s ease-out;
+}
+
+@keyframes tour-notification-slide {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  20%, 80% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.tour-notification {
+  animation: tour-notification-slide 3s ease-in-out;
+}
+
+/* Enhanced button animations */
+.virtual-tour-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+}
+
+.virtual-tour-btn:active {
+  transform: translateY(0);
+}

@@ -12,12 +12,14 @@ import {
   Users, 
   Mail,
   Plus,
-  BarChart3
+  BarChart3,
+  Monitor
 } from 'lucide-react';
 import NewsManagement from './NewsManagement';
 import EventManagement from './EventManagement';
 import NotesManagement from './NotesManagement';
 import MediaManagement from './MediaManagement';
+import HeroSlideManagement from './HeroSlideManagement';
 
 interface DashboardStats {
   newsCount: number;
@@ -25,6 +27,7 @@ interface DashboardStats {
   notesCount: number;
   mediaCount: number;
   contactsCount: number;
+  heroSlidesCount: number;
 }
 
 export default function AdminDashboard() {
@@ -36,6 +39,7 @@ export default function AdminDashboard() {
   const { data: notesData } = useQuery<any[]>({ queryKey: ['/api/notes'] });
   const { data: mediaData } = useQuery<any[]>({ queryKey: ['/api/media'] });
   const { data: contactsData } = useQuery<any[]>({ queryKey: ['/api/contacts'] });
+  const { data: heroSlidesData } = useQuery<any[]>({ queryKey: ['/api/hero-slides'] });
 
   const stats: DashboardStats = {
     newsCount: newsData?.length || 0,
@@ -43,26 +47,33 @@ export default function AdminDashboard() {
     notesCount: notesData?.length || 0,
     mediaCount: mediaData?.length || 0,
     contactsCount: contactsData?.length || 0,
+    heroSlidesCount: heroSlidesData?.length || 0,
   };
 
   const quickActions = [
     {
+      label: 'Manage Hero Slides',
+      icon: Monitor,
+      action: () => setActiveTab('hero-slides'),
+      color: 'bg-primary text-primary-foreground',
+    },
+    {
       label: 'Add News Article',
       icon: Plus,
       action: () => setActiveTab('news'),
-      color: 'bg-primary text-primary-foreground',
+      color: 'bg-accent text-accent-foreground',
     },
     {
       label: 'Create Event',
       icon: Calendar,
       action: () => setActiveTab('events'),
-      color: 'bg-accent text-accent-foreground',
+      color: 'bg-primary text-primary-foreground',
     },
     {
       label: 'Upload Notes',
       icon: BookOpen,
       action: () => setActiveTab('notes'),
-      color: 'bg-primary text-primary-foreground',
+      color: 'bg-accent text-accent-foreground',
     },
   ];
 
@@ -96,8 +107,9 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
+          <TabsTrigger value="hero-slides" data-testid="tab-hero-slides">Hero Slides</TabsTrigger>
           <TabsTrigger value="news" data-testid="tab-news">News</TabsTrigger>
           <TabsTrigger value="events" data-testid="tab-events">Events</TabsTrigger>
           <TabsTrigger value="notes" data-testid="tab-notes">Notes</TabsTrigger>
@@ -105,9 +117,19 @@ export default function AdminDashboard() {
           <TabsTrigger value="contacts" data-testid="tab-contacts">Contacts</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="hero-slides">
+          <HeroSlideManagement />
+        </TabsContent>
+
         <TabsContent value="overview" className="space-y-8">
           {/* Statistics */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <StatCard
+              title="Hero Slides"
+              value={stats.heroSlidesCount}
+              icon={Monitor}
+              description="Homepage slides"
+            />
             <StatCard
               title="News Articles"
               value={stats.newsCount}

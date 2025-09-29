@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { insertUserSchema, insertFacultySchema, insertNewsSchema, insertEventSchema, insertNoteSchema, insertMediaSchema, insertContactSchema } from "@shared/schema";
+import { insertUserSchema, insertFacultySchema, insertNewsSchema, insertEventSchema, insertNoteSchema, insertMediaSchema, insertContactSchema, insertHeroSlideSchema } from "@shared/schema";
 import { z } from "zod";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
@@ -35,6 +35,59 @@ const authenticateAdmin = (req: Request, res: Response, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Hero Slides API
+  app.get("/api/hero-slides", async (_req: Request, res: Response) => {
+    try {
+      const slides = await storage.getAllHeroSlides();
+      res.json(slides);
+    } catch (error) {
+      console.error("Get hero slides error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/hero-slides", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const slideData = insertHeroSlideSchema.parse(req.body);
+      const slide = await storage.createHeroSlide(slideData);
+      res.status(201).json(slide);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      console.error("Create hero slide error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.put("/api/hero-slides/:id", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+      const slide = await storage.updateHeroSlide(id, updateData);
+      if (!slide) {
+        return res.status(404).json({ message: "Hero slide not found" });
+      }
+      res.json(slide);
+    } catch (error) {
+      console.error("Update hero slide error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/hero-slides/:id", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.deleteHeroSlide(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Hero slide not found" });
+      }
+      res.json({ message: "Hero slide deleted successfully" });
+    } catch (error) {
+      console.error("Delete hero slide error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
   // Authentication routes
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {

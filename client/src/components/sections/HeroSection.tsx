@@ -1,60 +1,143 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useQuery } from '@tanstack/react-query';
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface HeroSlide {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  type: 'main' | 'events' | 'news' | 'achievement' | 'partnership';
+  isActive: boolean;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export default function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isVirtualTourActive, setIsVirtualTourActive] = useState(false);
+  const [tourProgress, setTourProgress] = useState(0);
 
-  const slides = [
+  // Fetch hero slides from API
+  const { data: apiSlides, isLoading } = useQuery<HeroSlide[]>({
+    queryKey: ['/api/hero-slides'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Fallback slides in case API fails or returns empty
+  const fallbackSlides: HeroSlide[] = [
     {
-      id: 1,
+      id: 'fallback-1',
       title: "Computer Department",
       subtitle: "Vishweshwarayya Institute of Engineering & Technology",
       description: "Pioneering excellence in computer science education, research, and innovation. Shaping the future of technology through cutting-edge curriculum and world-class faculty.",
-      type: "main"
+      type: "main",
+      isActive: true,
+      order: 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
     {
-      id: 2,
-      title: "Upcoming Events",
-      subtitle: "Tech Symposium 2025 - October 15-17",
-      description: "Join us for the biggest technology symposium featuring industry leaders, workshops, and competitions. Registration now open for all students and professionals.",
-      type: "events"
-    },
-    {
-      id: 3,
-      title: "Latest News",
-      subtitle: "New AI Research Lab Inaugurated",
-      description: "Our department proudly announces the opening of a state-of-the-art Artificial Intelligence Research Lab equipped with the latest hardware and software for advanced research.",
-      type: "news"
-    },
-    {
-      id: 4,
-      title: "Achievement Spotlight",
-      subtitle: "Students Win National Coding Championship",
-      description: "Our computer science students secured first place in the National Inter-College Coding Championship, competing against 200+ institutions across the country.",
-      type: "achievement"
-    },
-    {
-      id: 5,
-      title: "Industry Partnership",
-      subtitle: "New Collaboration with Tech Giants",
-      description: "We've partnered with leading technology companies to provide internships, workshops, and placement opportunities for our students in cutting-edge domains.",
-      type: "partnership"
+      id: 'fallback-2',
+      title: "Innovation Hub",
+      subtitle: "Fostering Tomorrow's Technology Leaders",
+      description: "Experience world-class education in computer science with state-of-the-art labs, expert faculty, and industry partnerships that prepare you for the future.",
+      type: "achievement",
+      isActive: true,
+      order: 2,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     }
   ];
 
+  // Use API slides if available and active, otherwise fallback
+  const slides = apiSlides && apiSlides.length > 0 
+    ? apiSlides
+        .filter(slide => slide.isActive)
+        .sort((a, b) => a.order - b.order)
+    : fallbackSlides;
+
   useEffect(() => {
+    if (slides.length === 0) return;
+    
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 3000); // Change slide every 5 seconds
+    }, 4000); // Change slide every 4 seconds
 
     return () => clearInterval(timer);
   }, [slides.length]);
+
+  // Reset current slide when slides change
+  useEffect(() => {
+    setCurrentSlide(0);
+  }, [apiSlides]);
 
   const scrollToContent = () => {
     const nextSection = document.getElementById('department-intro');
     if (nextSection) {
       nextSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const startVirtualTour = async () => {
+    if (isVirtualTourActive) return;
+    
+    setIsVirtualTourActive(true);
+    setTourProgress(0);
+    
+    // Array of section IDs to visit during the virtual tour
+    const tourSections = [
+      'department-intro',
+      'quick-links',
+      'about',
+      'news', 
+      'events',
+      'notes',
+      'media',
+      'contact'
+    ];
+
+    try {
+      // Scroll through each section with a delay
+      for (let i = 0; i < tourSections.length; i++) {
+        const section = document.getElementById(tourSections[i]);
+        if (section) {
+          // Update progress
+          setTourProgress(((i + 1) / tourSections.length) * 100);
+          
+          section.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'center'
+          });
+          
+          // Wait for scroll animation and viewing time
+          await new Promise(resolve => setTimeout(resolve, 2500));
+        }
+      }
+
+      // Wait a bit at the bottom
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Scroll back to top (hero section)
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+
+      // Complete tour
+      setTourProgress(100);
+
+    } catch (error) {
+      console.error('Virtual tour error:', error);
+    } finally {
+      // Reset tour state after a delay
+      setTimeout(() => {
+        setIsVirtualTourActive(false);
+        setTourProgress(0);
+      }, 2000);
     }
   };
 
@@ -69,8 +152,61 @@ export default function HeroSection() {
     }
   };
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <section className="relative h-screen flex items-center justify-center overflow-hidden" data-testid="hero-section">
+        {/* Premium 4K Background with College Image */}
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+             style={{
+               backgroundImage: "url('/viet-college.png')"
+             }}>
+          <div className="absolute inset-0 hero-gradient opacity-75"></div>
+        </div>
+        
+        {/* Loading Content */}
+        <div className="relative z-10 text-center text-primary-foreground max-w-6xl mx-auto px-4">
+          <div className="premium-card p-8 rounded-3xl mb-8 min-h-[500px] flex flex-col justify-center">
+            <Skeleton className="h-6 w-24 mb-4 mx-auto bg-primary/20" />
+            <Skeleton className="h-20 w-full mb-6 bg-primary/20" />
+            <Skeleton className="h-16 w-3/4 mb-8 mx-auto bg-primary/20" />
+            <Skeleton className="h-6 w-full mb-4 bg-primary/20" />
+            <Skeleton className="h-6 w-5/6 mb-10 mx-auto bg-primary/20" />
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Skeleton className="h-14 w-48 bg-primary/20" />
+              <Skeleton className="h-14 w-48 bg-primary/20" />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden" data-testid="hero-section">
+      {/* Virtual Tour Notification */}
+      {isVirtualTourActive && (
+        <div className="fixed top-6 right-6 z-50 glass-effect px-6 py-3 rounded-2xl border border-primary/30 backdrop-blur-sm tour-notification">
+          <div className="flex items-center gap-3 text-primary-foreground">
+            <svg className="animate-spin h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            <div>
+              <p className="font-semibold">Virtual Tour in Progress</p>
+              <div className="flex items-center gap-2 mt-1">
+                <div className="w-24 h-2 bg-background/30 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary tour-progress-bar transition-all duration-300"
+                    style={{ width: `${tourProgress}%` }}
+                  />
+                </div>
+                <span className="text-xs text-primary">{Math.round(tourProgress)}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Premium 4K Background with College Image */}
       <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
            style={{
@@ -127,7 +263,25 @@ export default function HeroSection() {
                   {slide.description}
                 </p>
               </div>
-            ))}
+            ))})
+            
+            {/* Empty state - should not normally show due to fallback slides */}
+            {slides.length === 0 && (
+              <div className="text-center">
+                <div className="inline-block px-4 py-2 rounded-full text-xs font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                  WELCOME
+                </div>
+                <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight text-gradient">
+                  VIET Computer Department
+                  <span className="block text-accent text-4xl md:text-5xl mt-4 font-light">
+                    Excellence in Technology Education
+                  </span>
+                </h1>
+                <p className="text-xl md:text-2xl mb-10 text-primary-foreground/90 max-w-4xl mx-auto leading-relaxed font-light">
+                  Welcome to our department. Content is being updated.
+                </p>
+              </div>
+            )}
             
             {/* Ensure content has minimum height */}
             <div className="opacity-0 pointer-events-none">
@@ -158,10 +312,37 @@ export default function HeroSection() {
             <Button 
               variant="outline" 
               size="lg"
-              className="glass-effect border-2 border-primary/50 text-primary-foreground px-10 py-6 rounded-2xl font-semibold text-xl hover:bg-primary/20 hover:border-primary transition-all duration-300 hover-lift backdrop-blur-sm"
+              onClick={startVirtualTour}
+              disabled={isVirtualTourActive}
+              className={`virtual-tour-btn glass-effect border-2 border-primary/50 text-primary-foreground px-10 py-6 rounded-2xl font-semibold text-xl hover:bg-primary/20 hover:border-primary transition-all duration-300 hover-lift backdrop-blur-sm group relative overflow-hidden ${
+                isVirtualTourActive ? 'animate-pulse cursor-not-allowed opacity-90' : ''
+              }`}
               data-testid="virtual-tour-button"
             >
-              Virtual Tour
+              {/* Progress bar for virtual tour */}
+              {isVirtualTourActive && (
+                <div 
+                  className="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-300"
+                  style={{ width: `${tourProgress}%` }}
+                />
+              )}
+              <span className="flex items-center gap-2 relative z-10">
+                {isVirtualTourActive ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Touring... {Math.round(tourProgress)}%</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-5 w-5 group-hover:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Virtual Tour
+                  </>
+                )}
+              </span>
             </Button>
           </div>
         </div>

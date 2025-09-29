@@ -95,6 +95,18 @@ export const contacts = pgTable("contacts", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const heroSlides = pgTable("hero_slides", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  subtitle: text("subtitle").notNull(),
+  description: text("description").notNull(),
+  type: text("type").notNull(), // main, events, news, achievement, partnership
+  isActive: boolean("is_active").default(true),
+  order: integer("order").notNull().default(1),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const notesRelations = relations(notes, ({ one }) => ({
   uploadedBy: one(users, {
@@ -167,6 +179,12 @@ export const insertContactSchema = createInsertSchema(contacts).omit({
   createdAt: true,
 });
 
+export const insertHeroSlideSchema = createInsertSchema(heroSlides).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -182,3 +200,5 @@ export type InsertMedia = z.infer<typeof insertMediaSchema>;
 export type Media = typeof media.$inferSelect;
 export type InsertContact = z.infer<typeof insertContactSchema>;
 export type Contact = typeof contacts.$inferSelect;
+export type InsertHeroSlide = z.infer<typeof insertHeroSlideSchema>;
+export type HeroSlide = typeof heroSlides.$inferSelect;

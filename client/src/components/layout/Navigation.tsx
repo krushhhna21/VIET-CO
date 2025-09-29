@@ -21,6 +21,15 @@ export default function Navigation() {
     { href: "/contact", label: "Contact" },
   ];
 
+  const handleNavigation = () => {
+    // Close mobile menu when navigating
+    setMobileMenuOpen(false);
+    // Small delay to ensure smooth transition
+    setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement search functionality
@@ -33,7 +42,7 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-20">
           {/* Premium Logo */}
           <Link href="/" data-testid="logo-link">
-            <div className="flex items-center space-x-4 cursor-pointer group">
+            <div className="flex items-center space-x-4 cursor-pointer group" onClick={handleNavigation}>
               <div className="relative">
                 <img 
                   src="/logo.png" 
@@ -66,6 +75,7 @@ export default function Navigation() {
                   data-testid={`nav-link-${link.label.toLowerCase()}`}
                 >
                   <span
+                    onClick={handleNavigation}
                     className={`px-4 py-2 text-sm font-medium transition-all duration-300 cursor-pointer rounded-xl relative group ${
                       location === link.href
                         ? "text-primary bg-primary/10"
@@ -111,7 +121,7 @@ export default function Navigation() {
                 </span>
                 {user.role === "admin" && (
                   <Link href="/admin">
-                    <Button size="sm" className="premium-gradient text-white rounded-xl hover:shadow-glow transition-all duration-300 hover-lift" data-testid="admin-dashboard-button">
+                    <Button onClick={handleNavigation} size="sm" className="premium-gradient text-white rounded-xl hover:shadow-glow transition-all duration-300 hover-lift" data-testid="admin-dashboard-button">
                       Admin Dashboard
                     </Button>
                   </Link>
@@ -128,7 +138,7 @@ export default function Navigation() {
               </div>
             ) : (
               <Link href="/admin">
-                <Button size="sm" className="premium-gradient text-white rounded-xl hover:shadow-glow transition-all duration-300 hover-lift" data-testid="admin-login-button">
+                <Button onClick={handleNavigation} size="sm" className="premium-gradient text-white rounded-xl hover:shadow-glow transition-all duration-300 hover-lift" data-testid="admin-login-button">
                   Admin Login
                 </Button>
               </Link>
@@ -160,7 +170,7 @@ export default function Navigation() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={handleNavigation}
                   data-testid={`mobile-nav-link-${link.label.toLowerCase()}`}
                 >
                   <div
