@@ -110,6 +110,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Internal server error" });
     }
   });
+  // Test endpoint to verify JWT token
+  app.get("/api/auth/verify", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      console.log('Token verification successful for user:', user);
+      res.json({ 
+        success: true, 
+        user,
+        message: "Token is valid" 
+      });
+    } catch (error) {
+      console.error("Token verification error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Authentication routes
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
