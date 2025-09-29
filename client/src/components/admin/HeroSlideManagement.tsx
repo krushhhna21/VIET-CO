@@ -80,15 +80,20 @@ export default function HeroSlideManagement() {
 
   // Helper function to handle authentication errors
   const handleAuthError = (error: any, response?: Response) => {
-    if (response?.status === 401 || response?.status === 403 || 
-        error.message?.includes('token') || error.message?.includes('auth')) {
+    // Only logout on actual authentication/authorization failures
+    if ((response?.status === 401 || response?.status === 403) && 
+        (error.message?.includes('Invalid or expired token') || 
+         error.message?.includes('Access token required') ||
+         error.message?.includes('Admin access required'))) {
       toast({
         title: "Session Expired",
         description: "Your session has expired. Please log in again.",
         variant: "destructive",
       });
       logout();
+      return true; // Indicate that we handled the auth error
     }
+    return false; // Not an auth error
   };
 
   // Fetch hero slides
@@ -127,8 +132,8 @@ export default function HeroSlideManagement() {
       });
     },
     onError: (error: any) => {
-      handleAuthError(error, error.response);
-      if (error.response?.status !== 401 && error.response?.status !== 403) {
+      const wasAuthError = handleAuthError(error, error.response);
+      if (!wasAuthError) {
         toast({
           title: "Error",
           description: error.message || "Failed to create hero slide. Please try again.",
@@ -170,8 +175,8 @@ export default function HeroSlideManagement() {
       });
     },
     onError: (error: any) => {
-      handleAuthError(error, error.response);
-      if (error.response?.status !== 401 && error.response?.status !== 403) {
+      const wasAuthError = handleAuthError(error, error.response);
+      if (!wasAuthError) {
         toast({
           title: "Error",
           description: error.message || "Failed to update hero slide. Please try again.",
@@ -208,8 +213,8 @@ export default function HeroSlideManagement() {
       });
     },
     onError: (error: any) => {
-      handleAuthError(error, error.response);
-      if (error.response?.status !== 401 && error.response?.status !== 403) {
+      const wasAuthError = handleAuthError(error, error.response);
+      if (!wasAuthError) {
         toast({
           title: "Error",
           description: error.message || "Failed to delete hero slide. Please try again.",
