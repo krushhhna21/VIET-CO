@@ -6,7 +6,9 @@ import jwt from "jsonwebtoken";
 import { insertUserSchema, insertFacultySchema, insertNewsSchema, insertEventSchema, insertNoteSchema, insertMediaSchema, insertContactSchema, insertHeroSlideSchema } from "@shared/schema";
 import { z } from "zod";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET || "your-super-secure-jwt-secret-key-for-viet-college-2025";
+
+console.log('JWT_SECRET being used:', JWT_SECRET ? 'SET' : 'NOT SET');
 
 // Middleware for authentication
 const authenticateToken = (req: Request, res: Response, next: any) => {
@@ -15,6 +17,7 @@ const authenticateToken = (req: Request, res: Response, next: any) => {
 
   console.log('authenticateToken - Auth header:', authHeader);
   console.log('authenticateToken - Token:', token ? 'Present' : 'Missing');
+  console.log('authenticateToken - JWT_SECRET available:', JWT_SECRET ? 'YES' : 'NO');
 
   if (!token) {
     console.log('authenticateToken - No token provided');
@@ -24,7 +27,16 @@ const authenticateToken = (req: Request, res: Response, next: any) => {
   jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
     if (err) {
       console.log('authenticateToken - JWT verify error:', err.message);
-      return res.status(403).json({ message: "Invalid or expired token" });
+      console.log('authenticateToken - JWT error details:', err);
+      
+      // Check if it's an expired token specifically
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: "Token has expired", code: "TOKEN_EXPIRED" });
+      } else if (err.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: "Invalid token format", code: "INVALID_TOKEN" });
+      } else {
+        return res.status(403).json({ message: "Invalid or expired token", code: "TOKEN_INVALID" });
+      }
     }
     console.log('authenticateToken - JWT verify success, user:', user);
     (req as any).user = user;
@@ -110,6 +122,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Internal server error" });
     }
   });
+  // Token refresh endpoint
+  app.post("/api/auth/refresh", async (req: Request, res: Response) => {
+    try {
+      const { token: oldToken } = req.body;
+      
+      if (!oldToken) {
+        return res.status(400).json({ message: "Token required" });
+      }
+
+      // Verify the old token (even if expired)
+      jwt.verify(oldToken, JWT_SECRET, { ignoreExpiration: true }, async (err: any, decoded: any) => {
+        if (err && err.name !== 'TokenExpiredError') {
+          return res.status(401).json({ message: "Invalid token" });
+        }
+
+        // Get fresh user data
+        const user = await storage.getUserByUsername(decoded.username);
+        if (!user) {
+          return res.status(401).json({ message: "User not found" });
+        }
+
+        // Generate new token
+        const newToken = jwt.sign(
+          { id: user.id, username: user.username, role: user.role },
+          JWT_SECRET,
+          { expiresIn: '7d' }
+        );
+
+        res.json({ 
+          token: newToken, 
+          user: { 
+            id: user.id, 
+            username: user.username, 
+            email: user.email, 
+            role: user.role 
+          } 
+        });
+      });
+    } catch (error) {
+      console.error("Token refresh error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Test endpoint to verify JWT token
   app.get("/api/auth/verify", authenticateToken, async (req: Request, res: Response) => {
     try {
@@ -118,12 +174,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ 
         success: true, 
         user,
-        message: "Token is valid" 
+        message: "Token is valid",
+        jwtSecret: JWT_SECRET ? 'CONFIGURED' : 'NOT_CONFIGURED'
       });
     } catch (error) {
       console.error("Token verification error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
+  });
+
+  // Debug endpoint to check JWT configuration
+  app.get("/api/debug/jwt", async (req: Request, res: Response) => {
+    res.json({
+      jwtSecretConfigured: !!JWT_SECRET,
+      jwtSecretLength: JWT_SECRET ? JWT_SECRET.length : 0,
+      environment: process.env.NODE_ENV || 'development'
+    });
   });
 
   // Authentication routes
@@ -148,8 +214,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const token = jwt.sign(
         { id: user.id, username: user.username, role: user.role },
         JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '7d' } // Longer expiration for testing
       );
+
+      console.log('Login successful - Generated token for user:', user.username);
+      console.log('Token generated with JWT_SECRET:', JWT_SECRET ? 'YES' : 'NO');
 
       res.json({ 
         token, 

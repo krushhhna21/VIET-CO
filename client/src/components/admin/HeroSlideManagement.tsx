@@ -78,8 +78,8 @@ export default function HeroSlideManagement() {
   const { toast } = useToast();
   const { logout } = useAuth();
 
-  // Helper function to handle authentication errors
-  const handleAuthError = (error: any, response?: Response) => {
+  // Helper function to handle authentication errors with token refresh
+  const handleAuthError = async (error: any, response?: Response) => {
     console.log('Full error details:', { 
       error, 
       response, 
@@ -88,15 +88,49 @@ export default function HeroSlideManagement() {
       errorString: String(error)
     });
     
+    // Try to refresh token if it's expired
+    if (response?.status === 401 && 
+        (error.message?.includes('Token has expired') || error.message?.includes('expired'))) {
+      console.log('Token expired, attempting refresh...');
+      
+      try {
+        const oldToken = localStorage.getItem('viet_auth_token');
+        if (oldToken) {
+          const refreshResponse = await fetch('/api/auth/refresh', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token: oldToken }),
+          });
+          
+          if (refreshResponse.ok) {
+            const refreshData = await refreshResponse.json();
+            localStorage.setItem('viet_auth_token', refreshData.token);
+            localStorage.setItem('viet_user_data', JSON.stringify(refreshData.user));
+            
+            console.log('Token refreshed successfully');
+            toast({
+              title: "Token Refreshed",
+              description: "Your session has been renewed. Please try again.",
+              variant: "default",
+            });
+            return false; // Don't logout, token was refreshed
+          }
+        }
+      } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError);
+      }
+    }
+    
     // VERY specific conditions for logout - only on exact auth error messages
     const isStrictAuthError = (
       (response?.status === 401 && 
        (error.message === 'Access token required' || error.message?.includes('Access token required'))) ||
       (response?.status === 403 && 
-       (error.message === 'Invalid or expired token' || 
-        error.message === 'Admin access required' ||
-        error.message?.includes('Invalid or expired token') ||
-        error.message?.includes('Admin access required')))
+       (error.message === 'Admin access required' ||
+        error.message?.includes('Admin access required'))) ||
+      (response?.status === 401 && error.message?.includes('Invalid token'))
     );
     
     console.log('Strict auth error check:', isStrictAuthError);
@@ -152,9 +186,9 @@ export default function HeroSlideManagement() {
         variant: "default",
       });
     },
-    onError: (error: any) => {
+    onError: async (error: any) => {
       console.log('Create slide mutation error:', error);
-      const wasAuthError = handleAuthError(error, error.response);
+      const wasAuthError = await handleAuthError(error, error.response);
       
       // Always show error toast, regardless of auth status
       toast({
