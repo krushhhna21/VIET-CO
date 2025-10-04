@@ -9,7 +9,7 @@
     "clean": "rimraf dist",
     "build:client": "cd client && cross-env NODE_ENV=production vite build",
     "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist/server",
-    "copy-client": "mkdir -p dist/client && cp -r client/dist/* dist/client/",
+    "copy-client": "xcopy client\\dist dist\\client /E /I /Y",
     "start": "npm run db:push && node dist/server/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push:pg"
