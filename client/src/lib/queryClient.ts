@@ -16,9 +16,7 @@ export async function apiRequest(
 
   const token = authService.getToken();
   const headers: Record<string, string> = data ? { "Content-Type": "application/json" } : {};
-  
-  // Only add token if it exists and looks valid
-  if (token && token.includes('.') && token.split('.').length === 3) {
+  if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
@@ -28,20 +26,6 @@ export async function apiRequest(
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
-
-  // Handle auth errors specifically
-  if (res.status === 401) {
-    const errorText = await res.text();
-    console.warn('Authentication error:', errorText);
-    
-    // Clear invalid tokens
-    if (token) {
-      authService.clear();
-      window.location.reload();
-    }
-    
-    throw new Error(`Authentication failed: ${errorText}`);
-  }
 
   await throwIfResNotOk(res);
   return res;
@@ -53,12 +37,32 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    const token = authService.getToken();
+    const headers: Record<string, string> = {};
+    
+    // Only add token if it exists and looks valid
+    if (token && token.includes('.') && token.split('.').length === 3) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const res = await fetch(queryKey.join("/") as string, {
+      headers,
       credentials: "include",
     });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+    // Handle auth errors specifically
+    if (res.status === 401) {
+      if (unauthorizedBehavior === "returnNull") {
+        return null;
+      }
+      
+      // Clear invalid tokens
+      if (token) {
+        console.warn('Authentication failed, clearing token');
+        authService.clear();
+      }
+      
+      throw new Error('Authentication required');
     }
 
     await throwIfResNotOk(res);

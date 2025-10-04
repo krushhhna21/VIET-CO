@@ -15,11 +15,27 @@ export interface AuthResponse {
 
 export const authService = {
   setToken: (token: string) => {
-    localStorage.setItem(TOKEN_KEY, token);
+    if (authService.isValidTokenFormat(token)) {
+      localStorage.setItem(TOKEN_KEY, token);
+    } else {
+      console.error('Invalid token format provided');
+    }
   },
 
   getToken: (): string | null => {
-    return localStorage.getItem(TOKEN_KEY);
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (token && !authService.isValidTokenFormat(token)) {
+      console.warn('Invalid token found in storage, removing');
+      authService.removeToken();
+      return null;
+    }
+    return token;
+  },
+
+  isValidTokenFormat: (token: string): boolean => {
+    if (!token) return false;
+    // Basic JWT format validation (header.payload.signature)
+    return token.includes('.') && token.split('.').length === 3;
   },
 
   removeToken: () => {
@@ -46,12 +62,14 @@ export const authService = {
   },
 
   isAuthenticated: (): boolean => {
-    return !!authService.getToken() && !!authService.getUser();
+    const token = authService.getToken();
+    const user = authService.getUser();
+    return !!token && !!user && authService.isValidTokenFormat(token);
   },
 
   isAdmin: (): boolean => {
     const user = authService.getUser();
-    return user?.role === 'admin';
+    return user?.role === 'admin' && authService.isAuthenticated();
   },
 
   clear: () => {
