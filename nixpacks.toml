@@ -1,0 +1,23 @@
+[phases.setup]
+nixPkgs = ["nodejs_18", "openssl"]
+aptPkgs = ["build-essential"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm start"
+
+[deploy]
+healthcheckPath = "/debug"
+restartPolicyType = "on_failure"
+startupType = "wait"
+healthcheckTimeout = 10
+restartLimit = 3
+
+[env]
+NODE_ENV = "production"
+NODE_VERSION = "18"

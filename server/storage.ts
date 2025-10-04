@@ -28,6 +28,12 @@ import { db } from "./db";
 import { eq, desc, and, like } from "drizzle-orm";
 
 export interface IStorage {
+  // Hero Slide methods
+  getAllHeroSlides(): Promise<HeroSlide[]>;
+  getHeroSlideById(id: string): Promise<HeroSlide | undefined>;
+  createHeroSlide(slide: InsertHeroSlide): Promise<HeroSlide>;
+  updateHeroSlide(id: string, slide: Partial<InsertHeroSlide>): Promise<HeroSlide | undefined>;
+  deleteHeroSlide(id: string): Promise<boolean>;
   // User methods
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -87,6 +93,30 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Hero Slide methods
+  async getAllHeroSlides(): Promise<HeroSlide[]> {
+    return await db.select().from(heroSlides).orderBy(heroSlides.order);
+  }
+
+  async getHeroSlideById(id: string): Promise<HeroSlide | undefined> {
+    const [slide] = await db.select().from(heroSlides).where(eq(heroSlides.id, id));
+    return slide || undefined;
+  }
+
+  async createHeroSlide(slide: InsertHeroSlide): Promise<HeroSlide> {
+    const [created] = await db.insert(heroSlides).values(slide).returning();
+    return created;
+  }
+
+  async updateHeroSlide(id: string, slide: Partial<InsertHeroSlide>): Promise<HeroSlide | undefined> {
+    const [updated] = await db.update(heroSlides).set(slide).where(eq(heroSlides.id, id)).returning();
+    return updated || undefined;
+  }
+
+  async deleteHeroSlide(id: string): Promise<boolean> {
+    const result = await db.delete(heroSlides).where(eq(heroSlides.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
   // User methods
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));

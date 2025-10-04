@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
+import ScrollToTop from "@/components/layout/ScrollToTop";
+import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import News from "@/pages/News";
@@ -14,6 +16,7 @@ import Media from "@/pages/Media";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
+import { useEffect } from "react";
 
 function Router() {
   return (
@@ -32,15 +35,22 @@ function Router() {
 }
 
 function App() {
+  // Set dark theme as default
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen bg-background text-foreground font-sans scroll-smooth">
+        <div className="min-h-screen bg-background text-foreground font-sans antialiased scroll-smooth selection:bg-primary/20 selection:text-primary-foreground">
+          <ScrollToTop />
           <Navigation />
-          <main>
+          <main className="relative">
             <Router />
           </main>
           <Footer />
+          <ScrollToTopButton />
           <Toaster />
         </div>
       </TooltipProvider>

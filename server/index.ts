@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "../client/vite";
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync } from 'fs';
 
 const app = express();
 app.use(express.json());
@@ -46,13 +47,6 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-    res.status(status).json({ message });
-    throw err;
-  });
-
   // Development setup with Vite
   if (app.get("env") === "development") {
     try {
@@ -62,16 +56,64 @@ app.use((req, res, next) => {
       serveStatic(app); // Fallback to static if Vite setup fails
     }
   } else {
-    serveStatic(app);
+    // Production static file serving
+    const clientDistDir = join(process.cwd(), 'dist', 'client');
+    console.log('Serving static files from:', clientDistDir);
+    
+    // Serve static files with proper MIME types
+    app.use(express.static(clientDistDir, {
+      setHeaders: (res, path) => {
+        if (path.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css');
+        }
+        // Add cache control headers
+        res.setHeader('Cache-Control', 'public, max-age=31536000');
+      }
+    }));
+    
+    // Health check endpoint
+    app.get('/health', (req, res) => {
+      res.status(200).json({ status: 'ok' });
+    });
+
+    // Debug endpoint to check build paths
+    app.get('/debug', (req, res) => {
+      const debugInfo = {
+        __dirname,
+        clientDistDir,
+        env: process.env.NODE_ENV,
+        buildExists: existsSync(clientDistDir),
+        indexExists: existsSync(join(clientDistDir, 'index.html'))
+      };
+      res.json(debugInfo);
+    });
+
+    // Serve the client app's index.html for all non-API routes (SPA support)
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api')) {
+        return next();
+      }
+      const indexPath = join(clientDistDir, 'index.html');
+      console.log(`Attempting to serve index.html from: ${indexPath}`);
+      
+      if (!existsSync(indexPath)) {
+        console.error(`index.html not found at: ${indexPath}`);
+        return res.status(500).send('Application files not found');
+      }
+
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error('Error sending index.html:', err);
+          res.status(500).send('Error loading application');
+        }
+      });
+    });
   }
 
-  // Serve static files in production
-  const staticDir = join(__dirname, 'client', 'dist');
-  app.use(express.static(staticDir));
-
-  // Server listening on port 3000
-  const port = 3000;
-  server.listen(port, "127.0.0.1", () => {
-    log(`Serving on http://localhost:${port}`);
+  // Server listening on configured port
+  const port = parseInt(process.env.PORT || '3000', 10);
+  const host = process.env.HOST || '0.0.0.0';
+  server.listen(port, host, () => {
+    log(`Server listening on ${host}:${port}`);
   });
 })();

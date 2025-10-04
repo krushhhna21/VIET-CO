@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { authService, type User, type AuthResponse } from '@/lib/auth';
@@ -20,9 +20,14 @@ export function useAuth() {
   // Initialize auth state on mount
   useEffect(() => {
     const initAuth = () => {
-      if (authService.isAuthenticated()) {
-        const userData = authService.getUser();
-        setUser(userData);
+      try {
+        if (authService.isAuthenticated()) {
+          const userData = authService.getUser();
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        authService.clear(); // Clear corrupted auth data
       }
       setIsLoading(false);
     };
@@ -30,12 +35,27 @@ export function useAuth() {
     initAuth();
   }, []);
 
+  // Force navigation with state update
+  const navigateToAdmin = useCallback(() => {
+    // Force a complete re-render by updating the location
+    setLocation('/admin');
+    
+    // Also use window.location as a fallback
+    if (window.location.pathname !== '/admin') {
+      setTimeout(() => {
+        window.history.pushState({}, '', '/admin');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }, 50);
+    }
+  }, [setLocation]);
+
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginCredentials): Promise<AuthResponse> => {
       const response = await apiRequest('POST', '/api/auth/login', credentials);
       return response.json();
     },
     onSuccess: (data) => {
+      // Immediately update auth state
       authService.setToken(data.token);
       authService.setUser(data.user);
       setUser(data.user);
@@ -45,9 +65,27 @@ export function useAuth() {
         description: `Welcome back, ${data.user.username}!`,
       });
 
-      // Redirect to admin dashboard if user is admin
+      // Clear any cached data and invalidate queries
+      queryClient.invalidateQueries();
+      
+      // Force navigation with multiple approaches for reliability
       if (data.user.role === 'admin') {
+        // Immediate navigation
         setLocation('/admin');
+        
+        // Backup navigation methods
+        setTimeout(() => {
+          if (window.location.pathname !== '/admin') {
+            navigateToAdmin();
+          }
+        }, 100);
+        
+        // Final fallback
+        setTimeout(() => {
+          if (window.location.pathname !== '/admin') {
+            window.location.href = '/admin';
+          }
+        }, 500);
       } else {
         setLocation('/');
       }
