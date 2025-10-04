@@ -152,8 +152,18 @@ export default function HeroSlideManagement() {
   };
 
   // Fetch hero slides
-  const { data: slides, isLoading } = useQuery<HeroSlide[]>({
+  const { data: slides, isLoading, error } = useQuery<HeroSlide[]>({
     queryKey: ['/api/hero-slides'],
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+
+  // Debug logging
+  console.log('HeroSlideManagement Debug:', { 
+    slides, 
+    isLoading, 
+    error, 
+    slidesLength: slides?.length 
   });
 
   // Create slide mutation
@@ -350,9 +360,30 @@ export default function HeroSlideManagement() {
   if (isLoading) {
     return (
       <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-foreground">Hero Slide Management</h2>
+        <p className="text-muted-foreground">Loading hero slides...</p>
         {[1, 2, 3].map((i) => (
           <Skeleton key={i} className="h-24 w-full" />
         ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-foreground">Hero Slide Management</h2>
+        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-destructive mb-2">Error Loading Hero Slides</h3>
+          <p className="text-destructive/80">{error?.message || 'Unknown error occurred'}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            variant="outline" 
+            className="mt-4"
+          >
+            Retry
+          </Button>
+        </div>
       </div>
     );
   }
