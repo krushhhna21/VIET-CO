@@ -166,7 +166,7 @@ export default function HeroSection() {
         
         {/* Loading Content */}
         <div className="relative z-10 text-center text-primary-foreground max-w-6xl mx-auto px-4">
-          <div className="premium-card p-8 rounded-3xl mb-8 min-h-[500px] flex flex-col justify-center">
+          <div className="glass-effect backdrop-blur-md bg-white/10 border border-white/20 shadow-2xl p-8 rounded-3xl mb-8 min-h-[500px] flex flex-col justify-center">
             <Skeleton className="h-6 w-24 mb-4 mx-auto bg-primary/20" />
             <Skeleton className="h-20 w-full mb-6 bg-primary/20" />
             <Skeleton className="h-16 w-3/4 mb-8 mx-auto bg-primary/20" />
@@ -263,7 +263,7 @@ export default function HeroSection() {
                   {slide.description}
                 </p>
               </div>
-            ))})
+            ))}
             
             {/* Empty state - should not normally show due to fallback slides */}
             {slides.length === 0 && (
