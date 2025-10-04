@@ -85,6 +85,20 @@ export const media = pgTable("media", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const heroSlides = pgTable("hero_slides", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  subtitle: text("subtitle"),
+  description: text("description"),
+  backgroundImage: text("background_image").notNull(),
+  ctaText: text("cta_text"),
+  ctaLink: text("cta_link"),
+  order: integer("order").default(0),
+  published: boolean("published").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const contacts = pgTable("contacts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
@@ -129,11 +143,26 @@ export const insertNewsSchema = createInsertSchema(news).omit({
   updatedAt: true,
 });
 
-export const insertEventSchema = createInsertSchema(events).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+export const insertEventSchema = createInsertSchema(events)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    eventDate: z.preprocess(
+      (val) => (typeof val === 'string' ? new Date(val) : val),
+      z.date({ required_error: 'eventDate is required' })
+    ),
+    endDate: z.preprocess(
+      (val) => {
+        if (val === null || val === undefined || val === "") return undefined;
+        if (typeof val === 'string') return new Date(val);
+        return val;
+      },
+      z.date().optional()
+    ),
+  });
 
 export const insertNoteSchema = createInsertSchema(notes).omit({
   id: true,
@@ -142,6 +171,12 @@ export const insertNoteSchema = createInsertSchema(notes).omit({
 });
 
 export const insertMediaSchema = createInsertSchema(media).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertHeroSlideSchema = createInsertSchema(heroSlides).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -165,5 +200,7 @@ export type InsertNote = z.infer<typeof insertNoteSchema>;
 export type Note = typeof notes.$inferSelect;
 export type InsertMedia = z.infer<typeof insertMediaSchema>;
 export type Media = typeof media.$inferSelect;
+export type InsertHeroSlide = z.infer<typeof insertHeroSlideSchema>;
+export type HeroSlide = typeof heroSlides.$inferSelect;
 export type InsertContact = z.infer<typeof insertContactSchema>;
 export type Contact = typeof contacts.$inferSelect;

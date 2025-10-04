@@ -14,7 +14,7 @@ export default function News() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const { data: news, isLoading } = useQuery<News[]>({
-    queryKey: ['/api/news', { published: true }],
+    queryKey: ['/api/news?published=true'],
   });
 
   const categories = ['all', 'Achievement', 'Research', 'Industry', 'Academic'];

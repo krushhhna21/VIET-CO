@@ -1,0 +1,57 @@
+General Overview
+
+Your website is a full-stack web application intended for the Vishweshwarayya Institute of Engineering and Technology (VIET) Computer Department. The website includes several key sections for users to interact with, as well as an admin dashboard to manage content.
+
+Frontend:
+
+Framework: The frontend is built using React 18 with TypeScript, ensuring type safety and modern web practices.
+
+Styling: The site uses Tailwind CSS combined with shadcn/ui (a component library) for consistent, accessible, and responsive UI design.
+
+Routing: The routing is handled by Wouter, a lightweight client-side router for React.
+
+State Management: TanStack Query (React Query) is used for managing server-side state and data fetching.
+
+UI Components: Modular, reusable components (like buttons, cards, inputs) from Radix UI and your own custom components are used for consistent design.
+
+Key Sections of the Website:
+
+Homepage (Hero Section): This section introduces the Computer Science Department and encourages users to explore programs and take a virtual tour.
+
+About Us: Provides details about the department, its mission, and vision, with a faculty section introducing the team.
+
+News: Displays the latest news and updates about the department, with functionality for the admin to manage news articles.
+
+Events: Displays upcoming workshops, seminars, and technical competitions, with event management functionality for the admin.
+
+Notes: A section for study materials, including lecture notes and other academic resources. Admin can upload, edit, or delete notes.
+
+Media Gallery: Showcases photos and videos from various events and workshops.
+
+Contact Section: Allows users to get in touch with the department through a contact form.
+
+Quick Links: Provides direct links to the most important sections (e.g., Latest News, Events, Notes).
+
+Backend:
+
+Framework: The backend uses Node.js with the Express.js framework.
+
+Database: A PostgreSQL database is used, with Drizzle ORM for type-safe database queries.
+
+Authentication: JWT-based authentication is used for both users and admins. Admin login functionality is provided for managing the website's content.
+
+APIs: The backend exposes RESTful APIs for various resources like news, events, notes, and media.
+
+Admin Dashboard:
+
+The Admin Dashboard is a powerful tool for managing the content on the website:
+
+CRUD operations for managing news articles, events, study notes, media, and contact submissions.
+
+Statistics: Displays various statistics such as the number of news articles, events, notes, and faculty.
+
+Features:
+
+User Roles: There are different access levels for users and administrators, ensuring security and appropriate content management.
+
+Responsive Design: The website is fully responsive, ensuring that it works seamlessly on both desktop and mobile devices.

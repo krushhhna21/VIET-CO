@@ -7,13 +7,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Download, FileText, FileImage, Code } from "lucide-react";
 import { Link } from "wouter";
 import type { Note } from "@shared/schema";
+import React from "react";
 
 export default function NotesSection() {
   const [selectedSemester, setSelectedSemester] = useState<string>("all");
-  
   const { data: notes, isLoading } = useQuery<Note[]>({
-    queryKey: selectedSemester === "all" ? ['/api/notes', { published: true }] : ['/api/notes', { semester: selectedSemester }],
+    queryKey:
+      selectedSemester === "all"
+        ? ['/api/notes?published=true']
+        : [`/api/notes?semester=${encodeURIComponent(selectedSemester)}&published=true`],
   });
+
+  // Debug: log notes data and selected semester to verify what is being received and filtered
+  React.useEffect(() => {
+    console.log('Notes data:', notes);
+    console.log('Selected semester:', selectedSemester);
+  }, [notes, selectedSemester]);
 
   const semesters = ["all", "Semester 1", "Semester 2", "Semester 3", "Semester 4"];
 

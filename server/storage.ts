@@ -13,13 +13,16 @@ import {
   type InsertMedia,
   type Contact,
   type InsertContact,
+  type HeroSlide,
+  type InsertHeroSlide,
   users,
   faculty,
   news,
   events,
   notes,
   media,
-  contacts
+  contacts,
+  heroSlides
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, like } from "drizzle-orm";
@@ -67,6 +70,13 @@ export interface IStorage {
   createMedia(media: InsertMedia): Promise<Media>;
   updateMedia(id: string, media: Partial<InsertMedia>): Promise<Media | undefined>;
   deleteMedia(id: string): Promise<boolean>;
+  
+  // Hero Slide methods
+  getAllHeroSlides(published?: boolean): Promise<HeroSlide[]>;
+  getHeroSlideById(id: string): Promise<HeroSlide | undefined>;
+  createHeroSlide(slide: InsertHeroSlide): Promise<HeroSlide>;
+  updateHeroSlide(id: string, slide: Partial<InsertHeroSlide>): Promise<HeroSlide | undefined>;
+  deleteHeroSlide(id: string): Promise<boolean>;
   
   // Contact methods
   getAllContacts(): Promise<Contact[]>;
@@ -244,6 +254,34 @@ export class DatabaseStorage implements IStorage {
 
   async deleteMedia(id: string): Promise<boolean> {
     const result = await db.delete(media).where(eq(media.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // Hero Slide methods
+  async getAllHeroSlides(published?: boolean): Promise<HeroSlide[]> {
+    const conditions = published !== undefined ? eq(heroSlides.published, published) : undefined;
+    return await db.select().from(heroSlides)
+      .where(conditions)
+      .orderBy(desc(heroSlides.order), desc(heroSlides.createdAt));
+  }
+
+  async getHeroSlideById(id: string): Promise<HeroSlide | undefined> {
+    const [slide] = await db.select().from(heroSlides).where(eq(heroSlides.id, id));
+    return slide || undefined;
+  }
+
+  async createHeroSlide(insertSlide: InsertHeroSlide): Promise<HeroSlide> {
+    const [slide] = await db.insert(heroSlides).values(insertSlide).returning();
+    return slide;
+  }
+
+  async updateHeroSlide(id: string, updateData: Partial<InsertHeroSlide>): Promise<HeroSlide | undefined> {
+    const [slide] = await db.update(heroSlides).set(updateData).where(eq(heroSlides.id, id)).returning();
+    return slide || undefined;
+  }
+
+  async deleteHeroSlide(id: string): Promise<boolean> {
+    const result = await db.delete(heroSlides).where(eq(heroSlides.id, id));
     return result.rowCount ? result.rowCount > 0 : false;
   }
 

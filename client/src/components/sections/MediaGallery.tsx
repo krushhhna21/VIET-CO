@@ -4,14 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import type { Media } from "@shared/schema";
+import React from "react";
 
 export default function MediaGallery() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  
   const { data: media, isLoading } = useQuery<Media[]>({
-    queryKey: selectedCategory === "all" ? ['/api/media', { published: true }] : ['/api/media', { category: selectedCategory }],
+    queryKey:
+      selectedCategory === "all"
+        ? ['/api/media?published=true']
+        : [`/api/media?category=${encodeURIComponent(selectedCategory)}&published=true`],
   });
 
+  // Debug: log media data and selected category to verify what is being received and filtered
+  React.useEffect(() => {
+    console.log('Media data:', media);
+    console.log('Selected category:', selectedCategory);
+  }, [media, selectedCategory]);
+  
   const categories = ["all", "Events", "Workshops", "Campus Life", "Awards"];
 
   if (isLoading) {

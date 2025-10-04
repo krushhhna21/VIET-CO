@@ -14,7 +14,7 @@ export default function Notes() {
   const [selectedSubject, setSelectedSubject] = useState<string>('all');
 
   const { data: notes, isLoading } = useQuery<Note[]>({
-    queryKey: ['/api/notes', { published: true }],
+    queryKey: ['/api/notes?published=true'],
   });
 
   const semesters = ['all', 'Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5', 'Semester 6', 'Semester 7', 'Semester 8'];

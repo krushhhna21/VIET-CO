@@ -22,7 +22,7 @@ export default function MediaManagement() {
     mediaType: 'image',
     category: '',
     alt: '',
-    published: false,
+    published: true, // Default to published
   });
 
   const { toast } = useToast();
@@ -85,8 +85,9 @@ export default function MediaManagement() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.mediaUrl || !formData.mediaType || !formData.category) {
-      toast({ title: 'Please fill in all required fields', variant: 'destructive' });
+    const validCategories = ["Events", "Workshops", "Campus Life", "Awards", "Faculty"];
+    if (!formData.title || !formData.mediaUrl || !formData.mediaType || !formData.category || !validCategories.includes(formData.category)) {
+      toast({ title: 'Please fill in all required fields and select a valid category', variant: 'destructive' });
       return;
     }
 

@@ -13,7 +13,7 @@ export default function Events() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const { data: events, isLoading } = useQuery<Event[]>({
-    queryKey: ['/api/events', { published: true }],
+    queryKey: ['/api/events?published=true'],
   });
 
   const categories = ['all', 'Workshop', 'Seminar', 'Competition', 'Conference'];

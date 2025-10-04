@@ -24,7 +24,7 @@ export default function NotesManagement() {
     fileName: '',
     fileSize: '',
     fileType: '',
-    published: false,
+    published: true, // Default to published
   });
 
   const { toast } = useToast();
@@ -89,8 +89,12 @@ export default function NotesManagement() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.subject || !formData.semester || !formData.fileUrl || !formData.fileName) {
-      toast({ title: 'Please fill in all required fields', variant: 'destructive' });
+    const validSemesters = [
+      "Semester 1", "Semester 2", "Semester 3", "Semester 4",
+      "Semester 5", "Semester 6", "Semester 7", "Semester 8"
+    ];
+    if (!formData.title || !formData.subject || !formData.semester || !formData.fileUrl || !formData.fileName || !validSemesters.includes(formData.semester)) {
+      toast({ title: 'Please fill in all required fields and select a valid semester', variant: 'destructive' });
       return;
     }
 

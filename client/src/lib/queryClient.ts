@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { authService } from "@/lib/auth";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -12,12 +13,35 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+
+  const token = authService.getToken();
+  const headers: Record<string, string> = data ? { "Content-Type": "application/json" } : {};
+  
+  // Only add token if it exists and looks valid
+  if (token && token.includes('.') && token.split('.').length === 3) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
+
+  // Handle auth errors specifically
+  if (res.status === 401) {
+    const errorText = await res.text();
+    console.warn('Authentication error:', errorText);
+    
+    // Clear invalid tokens
+    if (token) {
+      authService.clear();
+      window.location.reload();
+    }
+    
+    throw new Error(`Authentication failed: ${errorText}`);
+  }
 
   await throwIfResNotOk(res);
   return res;

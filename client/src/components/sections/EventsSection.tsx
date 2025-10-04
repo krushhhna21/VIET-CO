@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,13 @@ import type { Event } from "@shared/schema";
 
 export default function EventsSection() {
   const { data: events, isLoading } = useQuery<Event[]>({
-    queryKey: ['/api/events', { published: true }],
+    queryKey: ['/api/events?published=true'],
   });
+
+  // Debug: log events data to verify what is being received from the backend
+  useEffect(() => {
+    console.log('Events data:', events);
+  }, [events]);
 
   if (isLoading) {
     return (
@@ -37,7 +43,8 @@ export default function EventsSection() {
   }
 
   const featuredEvent = events?.[0];
-  const upcomingEvents = events?.slice(1, 4) || [];
+  // Show all events, not just future ones
+  const upcomingEvents = events?.slice(1) || [];
 
   return (
     <section id="events" className="py-20 bg-background" data-testid="events-section">

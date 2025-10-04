@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { insertUserSchema, insertFacultySchema, insertNewsSchema, insertEventSchema, insertNoteSchema, insertMediaSchema, insertContactSchema } from "@shared/schema";
+import { insertUserSchema, insertFacultySchema, insertNewsSchema, insertEventSchema, insertNoteSchema, insertMediaSchema, insertContactSchema, insertHeroSlideSchema } from "@shared/schema";
 import { z } from "zod";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
@@ -14,11 +14,22 @@ const authenticateToken = (req: Request, res: Response, next: any) => {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.sendStatus(401);
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  // Validate token format (basic check for JWT structure)
+  if (!token.includes('.') || token.split('.').length !== 3) {
+    return res.status(401).json({ message: 'Invalid token format' });
   }
 
   jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-    if (err) return res.sendStatus(403);
+    if (err) {
+      console.error('Token verification error:', err.message);
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token expired' });
+      }
+      return res.status(403).json({ message: 'Invalid token' });
+    }
     (req as any).user = user;
     next();
   });
@@ -280,6 +291,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/events", authenticateAdmin, async (req: Request, res: Response) => {
+    // Log the entire request body and types for debugging
+    console.log('RAW req.body:', req.body);
+    if (req.body) {
+      Object.entries(req.body).forEach(([k, v]) => {
+        console.log(`  ${k}:`, v, typeof v);
+      });
+    }
     try {
       const eventData = insertEventSchema.parse(req.body);
       const event = await storage.createEvent(eventData);
@@ -454,6 +472,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Media deleted successfully" });
     } catch (error) {
       console.error("Delete media error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Hero Slides routes
+  app.get("/api/hero-slides", async (req: Request, res: Response) => {
+    try {
+      const { published } = req.query;
+      const publishedFilter = published === 'true' ? true : published === 'false' ? false : undefined;
+      const slides = await storage.getAllHeroSlides(publishedFilter);
+      res.json(slides);
+    } catch (error) {
+      console.error("Get hero slides error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/hero-slides", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const slideData = insertHeroSlideSchema.parse(req.body);
+      const slide = await storage.createHeroSlide(slideData);
+      res.status(201).json(slide);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      console.error("Create hero slide error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.put("/api/hero-slides/:id", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+      const slide = await storage.updateHeroSlide(id, updateData);
+      
+      if (!slide) {
+        return res.status(404).json({ message: "Hero slide not found" });
+      }
+      
+      res.json(slide);
+    } catch (error) {
+      console.error("Update hero slide error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/hero-slides/:id", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.deleteHeroSlide(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Hero slide not found" });
+      }
+      
+      res.json({ message: "Hero slide deleted successfully" });
+    } catch (error) {
+      console.error("Delete hero slide error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });

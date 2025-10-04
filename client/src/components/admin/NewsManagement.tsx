@@ -21,7 +21,7 @@ export default function NewsManagement() {
     content: '',
     category: '',
     image: '',
-    published: false,
+    published: true, // Default to published
   });
 
   const { toast } = useToast();
@@ -32,7 +32,11 @@ export default function NewsManagement() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: InsertNews) => apiRequest('POST', '/api/news', data),
+    mutationFn: (data: InsertNews) => {
+      // Remove publishedAt if present
+      const { publishedAt, ...rest } = data as any;
+      return apiRequest('POST', '/api/news', rest);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/news'] });
       toast({ title: 'News article created successfully' });
@@ -44,8 +48,11 @@ export default function NewsManagement() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<InsertNews> }) =>
-      apiRequest('PUT', `/api/news/${id}`, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<InsertNews> }) => {
+      // Remove publishedAt if present
+      const { publishedAt, ...rest } = data as any;
+      return apiRequest('PUT', `/api/news/${id}`, rest);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/news'] });
       toast({ title: 'News article updated successfully' });
@@ -74,7 +81,7 @@ export default function NewsManagement() {
       content: '',
       category: '',
       image: '',
-      published: false,
+      published: true, // Default to published
     });
     setIsCreating(false);
     setEditingItem(null);
@@ -95,7 +102,6 @@ export default function NewsManagement() {
       category: formData.category,
       image: formData.image || undefined,
       published: formData.published || false,
-      publishedAt: formData.published ? new Date().toISOString() : undefined,
     };
 
     if (editingItem) {

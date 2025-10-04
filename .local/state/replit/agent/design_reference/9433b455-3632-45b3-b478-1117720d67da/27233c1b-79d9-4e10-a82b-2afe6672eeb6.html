@@ -1,0 +1,1183 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishweshwarayya Institute of Engineering and Technology - Computer Department</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                },
+                fontFamily: {
+                    sans: ["Inter", "system-ui", "sans-serif"],
+                }
+            },
+        }
+    };
+    </script>
+    <style>
+        :root {
+            --background: hsl(210 40% 98%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(221.2 83.2% 53.3%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 84% 4.9%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(43.3 96.4% 56.3%);
+            --accent-foreground: hsl(222.2 84% 4.9%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(221.2 83.2% 53.3%);
+            --radius: 0.5rem;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, hsl(221.2 83.2% 53.3%) 0%, hsl(221.2 83.2% 43.3%) 100%);
+        }
+        
+        .gold-gradient {
+            background: linear-gradient(135deg, hsl(43.3 96.4% 56.3%) 0%, hsl(43.3 96.4% 46.3%) 100%);
+        }
+        
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+        
+        .hover-lift {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-background text-foreground font-sans scroll-smooth">
+    <!-- Navigation Header -->
+    <!-- @COMPONENT: NavigationHeader -->
+    <nav class="bg-card shadow-sm border-b border-border sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-primary-foreground text-lg"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-foreground">VIET</h1>
+                        <p class="text-xs text-muted-foreground">Computer Department</p>
+                    </div>
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">Home</a>
+                        <a href="#about" class="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">About</a>
+                        <a href="#news" class="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">News</a>
+                        <a href="#events" class="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">Events</a>
+                        <a href="#notes" class="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">Notes</a>
+                        <a href="#media" class="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">Media</a>
+                        <a href="#contact" class="text-muted-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">Contact</a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="search" placeholder="Search..." class="bg-muted border border-border rounded-md px-3 py-1 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-ring">
+                        <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm"></i>
+                    </div>
+                    <button class="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
+                        Admin Login
+                    </button>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button class="text-muted-foreground hover:text-foreground p-2">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: NavigationHeader -->
+
+    <!-- Hero Section -->
+    <!-- @COMPONENT: HeroSection -->
+    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- Modern tech laboratory with students working on computers -->
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&h=1080');">
+            <div class="absolute inset-0 hero-gradient opacity-85"></div>
+        </div>
+        
+        <div class="relative z-10 text-center text-primary-foreground max-w-4xl mx-auto px-4">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                Computer Department
+                <span class="block text-accent text-3xl md:text-4xl mt-2">Vishweshwarayya Institute of Engineering & Technology</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 text-primary-foreground/90 max-w-3xl mx-auto leading-relaxed">
+                Pioneering excellence in computer science education, research, and innovation. Shaping the future of technology through cutting-edge curriculum and world-class faculty.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="gold-gradient text-accent-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-lg transition-all hover-lift">
+                    Explore Programs
+                </button>
+                <button class="border-2 border-primary-foreground text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-foreground hover:text-primary transition-all hover-lift">
+                    Virtual Tour
+                </button>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-primary-foreground">
+            <div class="animate-bounce">
+                <i class="fas fa-chevron-down text-2xl"></i>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HeroSection -->
+
+    <!-- Department Introduction -->
+    <!-- @COMPONENT: DepartmentIntro -->
+    <section class="py-20 bg-background">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                        ESTABLISHED 1999
+                    </div>
+                    <h2 class="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                        Leading Computer Science Education Since
+                        <span class="text-primary">Two Decades</span>
+                    </h2>
+                    <p class="text-lg text-muted-foreground mb-8 leading-relaxed">
+                        Our Computer Science Department stands at the forefront of technological education and innovation. With state-of-the-art laboratories, renowned faculty, and industry partnerships, we prepare students for the challenges of tomorrow's digital world.
+                    </p>
+                    
+                    <div class="grid grid-cols-3 gap-6 mb-8">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary">500+</div>
+                            <div class="text-sm text-muted-foreground">Students</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary">50+</div>
+                            <div class="text-sm text-muted-foreground">Faculty</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary">95%</div>
+                            <div class="text-sm text-muted-foreground">Placement</div>
+                        </div>
+                    </div>
+                    
+                    <button class="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors hover-lift">
+                        Learn More About Us
+                    </button>
+                </div>
+                
+                <div class="relative">
+                    <!-- Students working in a modern computer lab with multiple monitors -->
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" alt="Students working in modern computer laboratory" class="rounded-xl shadow-2xl w-full h-auto" />
+                    <div class="absolute -bottom-6 -left-6 bg-accent text-accent-foreground p-6 rounded-xl shadow-lg">
+                        <div class="text-2xl font-bold">24/7</div>
+                        <div class="text-sm">Lab Access</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: DepartmentIntro -->
+
+    <!-- Quick Links Section -->
+    <!-- @COMPONENT: QuickLinks -->
+    <section class="py-16 bg-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-foreground mb-4">Quick Access</h2>
+                <p class="text-muted-foreground">Everything you need, just a click away</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift cursor-pointer">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-newspaper text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-foreground mb-2">Latest News</h3>
+                    <p class="text-muted-foreground text-sm">Stay updated with department announcements and achievements</p>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift cursor-pointer">
+                    <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-calendar-alt text-accent text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-foreground mb-2">Upcoming Events</h3>
+                    <p class="text-muted-foreground text-sm">Workshops, seminars, and technical competitions</p>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift cursor-pointer">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-book text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-foreground mb-2">Study Notes</h3>
+                    <p class="text-muted-foreground text-sm">Access lecture notes, assignments, and study materials</p>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift cursor-pointer">
+                    <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-photo-video text-accent text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-foreground mb-2">Media Gallery</h3>
+                    <p class="text-muted-foreground text-sm">Photos and videos from events and activities</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: QuickLinks -->
+
+    <!-- About Us Section -->
+    <!-- @COMPONENT: AboutUs -->
+    <section id="about" class="py-20 bg-background">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-foreground mb-4">About Our Department</h2>
+                <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                    Dedicated to excellence in computer science education, research, and innovation
+                </p>
+            </div>
+            
+            <!-- Mission and Vision -->
+            <div class="grid lg:grid-cols-2 gap-12 mb-20">
+                <div class="bg-card p-8 rounded-xl shadow-sm border border-border">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-bullseye text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-foreground mb-4">Our Mission</h3>
+                    <p class="text-muted-foreground leading-relaxed">
+                        To provide world-class education in computer science and engineering, fostering innovation, critical thinking, and ethical leadership. We strive to prepare students for successful careers in technology while contributing to societal advancement through cutting-edge research.
+                    </p>
+                </div>
+                
+                <div class="bg-card p-8 rounded-xl shadow-sm border border-border">
+                    <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-eye text-accent text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-foreground mb-4">Our Vision</h3>
+                    <p class="text-muted-foreground leading-relaxed">
+                        To be recognized as a premier computer science department that produces globally competitive graduates, conducts impactful research, and serves as a hub for technological innovation and entrepreneurship in the region.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Faculty Section -->
+            <div class="mb-16">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-foreground mb-4">Our Faculty</h3>
+                    <p class="text-muted-foreground">Meet our distinguished team of educators and researchers</p>
+                </div>
+                
+                <!-- @MAP: faculty.map(faculty => ( -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-card p-6 rounded-xl shadow-sm border border-border text-center hover-lift" data-mock="true">
+                        <!-- Professional headshot of computer science professor in academic setting -->
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300" alt="Dr. Rajesh Kumar - Head of Department" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
+                        <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="faculty.name">Dr. Rajesh Kumar</h4>
+                        <p class="text-accent text-sm font-medium mb-2" data-bind="faculty.position">Head of Department</p>
+                        <p class="text-muted-foreground text-sm" data-bind="faculty.specialization">AI & Machine Learning</p>
+                    </div>
+                    
+                    <div class="bg-card p-6 rounded-xl shadow-sm border border-border text-center hover-lift" data-mock="true">
+                        <!-- Professional headshot of female computer science professor -->
+                        <img src="https://pixabay.com/get/gc1aeaf080f8c50da4070b2a444e9e14accc75af1d7a86caffb2129f6057e679bcb127418f53f0d2cf826a996f906cafa8800d6184e6823d07cee43b8a647f54b_1280.jpg" alt="Dr. Priya Sharma - Professor" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
+                        <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="faculty.name">Dr. Priya Sharma</h4>
+                        <p class="text-accent text-sm font-medium mb-2" data-bind="faculty.position">Professor</p>
+                        <p class="text-muted-foreground text-sm" data-bind="faculty.specialization">Data Science & Analytics</p>
+                    </div>
+                    
+                    <div class="bg-card p-6 rounded-xl shadow-sm border border-border text-center hover-lift" data-mock="true">
+                        <!-- Professional headshot of computer science professor with glasses -->
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300" alt="Dr. Amit Patel - Associate Professor" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
+                        <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="faculty.name">Dr. Amit Patel</h4>
+                        <p class="text-accent text-sm font-medium mb-2" data-bind="faculty.position">Associate Professor</p>
+                        <p class="text-muted-foreground text-sm" data-bind="faculty.specialization">Cybersecurity</p>
+                    </div>
+                    
+                    <div class="bg-card p-6 rounded-xl shadow-sm border border-border text-center hover-lift" data-mock="true">
+                        <!-- Professional headshot of young computer science professor -->
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300" alt="Dr. Neha Gupta - Assistant Professor" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
+                        <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="faculty.name">Dr. Neha Gupta</h4>
+                        <p class="text-accent text-sm font-medium mb-2" data-bind="faculty.position">Assistant Professor</p>
+                        <p class="text-muted-foreground text-sm" data-bind="faculty.specialization">Software Engineering</p>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+            
+            <!-- Infrastructure -->
+            <div class="bg-card p-8 rounded-xl shadow-sm border border-border">
+                <h3 class="text-2xl font-bold text-foreground mb-6">Infrastructure & Facilities</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-desktop text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-foreground">Computer Labs</h4>
+                            <p class="text-muted-foreground text-sm">8 state-of-the-art computer laboratories with latest hardware</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-flask text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-foreground">Research Labs</h4>
+                            <p class="text-muted-foreground text-sm">Dedicated spaces for AI, ML, and cybersecurity research</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-book text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-foreground">Digital Library</h4>
+                            <p class="text-muted-foreground text-sm">Extensive collection of technical books and journals</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: AboutUs -->
+
+    <!-- Latest News Section -->
+    <!-- @COMPONENT: LatestNews -->
+    <section id="news" class="py-20 bg-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-foreground mb-4">Latest News & Updates</h2>
+                <p class="text-muted-foreground">Stay informed about department activities and achievements</p>
+            </div>
+            
+            <!-- @MAP: news.map(article => ( -->
+            <div class="grid lg:grid-cols-3 gap-8">
+                <article class="bg-card rounded-xl shadow-sm border border-border overflow-hidden hover-lift" data-mock="true">
+                    <!-- Students celebrating at a tech competition with awards -->
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=250" alt="Students celebrating tech competition victory" class="w-full h-48 object-cover" />
+                    <div class="p-6">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">Achievement</span>
+                            <span class="text-muted-foreground text-xs" data-bind="article.date">Dec 15, 2024</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-foreground mb-3" data-bind="article.title">Students Win National Coding Championship</h3>
+                        <p class="text-muted-foreground text-sm" data-bind="article.excerpt">Our computer science team secured first place in the National Collegiate Programming Contest, showcasing exceptional problem-solving skills...</p>
+                        <a href="#" class="inline-flex items-center text-primary text-sm font-medium mt-4 hover:text-primary/80">
+                            Read More <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </article>
+                
+                <article class="bg-card rounded-xl shadow-sm border border-border overflow-hidden hover-lift" data-mock="true">
+                    <!-- Modern AI research laboratory with advanced equipment -->
+                    <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=250" alt="AI research laboratory with advanced equipment" class="w-full h-48 object-cover" />
+                    <div class="p-6">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-xs font-medium">Research</span>
+                            <span class="text-muted-foreground text-xs" data-bind="article.date">Dec 12, 2024</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-foreground mb-3" data-bind="article.title">New AI Research Lab Inaugurated</h3>
+                        <p class="text-muted-foreground text-sm" data-bind="article.excerpt">State-of-the-art artificial intelligence research laboratory equipped with cutting-edge GPUs and machine learning tools opened...</p>
+                        <a href="#" class="inline-flex items-center text-primary text-sm font-medium mt-4 hover:text-primary/80">
+                            Read More <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </article>
+                
+                <article class="bg-card rounded-xl shadow-sm border border-border overflow-hidden hover-lift" data-mock="true">
+                    <!-- Industry professional giving presentation to students -->
+                    <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=250" alt="Industry expert presenting to students" class="w-full h-48 object-cover" />
+                    <div class="p-6">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">Industry</span>
+                            <span class="text-muted-foreground text-xs" data-bind="article.date">Dec 10, 2024</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-foreground mb-3" data-bind="article.title">Industry Expert Lecture Series Begins</h3>
+                        <p class="text-muted-foreground text-sm" data-bind="article.excerpt">Leading technology professionals from major companies share insights on current industry trends and career opportunities...</p>
+                        <a href="#" class="inline-flex items-center text-primary text-sm font-medium mt-4 hover:text-primary/80">
+                            Read More <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </article>
+            </div>
+            <!-- @END_MAP )) -->
+            
+            <div class="text-center mt-12">
+                <button class="bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors hover-lift">
+                    View All News
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: LatestNews -->
+
+    <!-- Events Section -->
+    <!-- @COMPONENT: EventsSection -->
+    <section id="events" class="py-20 bg-background">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-foreground mb-4">Upcoming Events</h2>
+                <p class="text-muted-foreground">Join us for workshops, seminars, and competitions</p>
+            </div>
+            
+            <!-- Featured Event -->
+            <div class="bg-card rounded-2xl shadow-sm border border-border overflow-hidden mb-12 hover-lift">
+                <div class="grid lg:grid-cols-2">
+                    <div class="relative">
+                        <!-- Large tech conference hall with participants and speakers -->
+                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400" alt="Annual tech symposium conference hall" class="w-full h-80 lg:h-full object-cover" />
+                        <div class="absolute top-4 left-4 bg-accent text-accent-foreground px-4 py-2 rounded-lg font-semibold">
+                            Featured Event
+                        </div>
+                    </div>
+                    <div class="p-8 lg:p-12">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i class="fas fa-calendar-alt text-primary"></i>
+                            <span class="text-primary font-medium" data-bind="event.date">December 20-22, 2024</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-foreground mb-4" data-bind="event.title">Annual Tech Symposium 2024</h3>
+                        <p class="text-muted-foreground mb-6 leading-relaxed" data-bind="event.description">
+                            Join us for our flagship annual event featuring keynote speakers from leading tech companies, research presentations, and networking opportunities. Topics include AI, blockchain, cybersecurity, and emerging technologies.
+                        </p>
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-map-marker-alt text-muted-foreground"></i>
+                                <span class="text-muted-foreground text-sm" data-bind="event.location">Main Auditorium</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-clock text-muted-foreground"></i>
+                                <span class="text-muted-foreground text-sm" data-bind="event.time">9:00 AM - 6:00 PM</span>
+                            </div>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors hover-lift">
+                            Register Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Event Calendar -->
+            <!-- @MAP: events.map(event => ( -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift" data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">Workshop</div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-foreground" data-bind="event.day">25</div>
+                            <div class="text-xs text-muted-foreground" data-bind="event.month">DEC</div>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="event.title">Machine Learning Workshop</h4>
+                    <p class="text-muted-foreground text-sm mb-4" data-bind="event.description">Hands-on workshop covering Python, TensorFlow, and practical ML applications.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-muted-foreground text-xs" data-bind="event.time">2:00 PM - 5:00 PM</span>
+                        <button class="text-primary text-sm font-medium hover:text-primary/80">Learn More</button>
+                    </div>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift" data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="bg-accent/10 text-accent px-3 py-1 rounded-full text-xs font-medium">Seminar</div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-foreground" data-bind="event.day">28</div>
+                            <div class="text-xs text-muted-foreground" data-bind="event.month">DEC</div>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="event.title">Cybersecurity Trends 2025</h4>
+                    <p class="text-muted-foreground text-sm mb-4" data-bind="event.description">Expert insights on emerging cybersecurity threats and protection strategies.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-muted-foreground text-xs" data-bind="event.time">11:00 AM - 12:30 PM</span>
+                        <button class="text-primary text-sm font-medium hover:text-primary/80">Learn More</button>
+                    </div>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift" data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">Competition</div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-foreground" data-bind="event.day">02</div>
+                            <div class="text-xs text-muted-foreground" data-bind="event.month">JAN</div>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="event.title">Hackathon 2025</h4>
+                    <p class="text-muted-foreground text-sm mb-4" data-bind="event.description">48-hour coding challenge with exciting prizes and industry mentorship.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-muted-foreground text-xs" data-bind="event.time">9:00 AM - 6:00 PM</span>
+                        <button class="text-primary text-sm font-medium hover:text-primary/80">Register</button>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_MAP )) -->
+        </div>
+    </section>
+    <!-- @END_COMPONENT: EventsSection -->
+
+    <!-- Notes Section -->
+    <!-- @COMPONENT: NotesSection -->
+    <section id="notes" class="py-20 bg-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-foreground mb-4">Study Materials</h2>
+                <p class="text-muted-foreground">Access lecture notes, assignments, and resources</p>
+            </div>
+            
+            <!-- Category Filters -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="bg-primary text-primary-foreground px-6 py-2 rounded-full font-medium hover:bg-primary/90 transition-colors">All</button>
+                <button class="bg-card text-foreground px-6 py-2 rounded-full font-medium hover:bg-primary hover:text-primary-foreground transition-colors border border-border">Semester 1</button>
+                <button class="bg-card text-foreground px-6 py-2 rounded-full font-medium hover:bg-primary hover:text-primary-foreground transition-colors border border-border">Semester 2</button>
+                <button class="bg-card text-foreground px-6 py-2 rounded-full font-medium hover:bg-primary hover:text-primary-foreground transition-colors border border-border">Semester 3</button>
+                <button class="bg-card text-foreground px-6 py-2 rounded-full font-medium hover:bg-primary hover:text-primary-foreground transition-colors border border-border">Semester 4</button>
+            </div>
+            
+            <!-- Notes Grid -->
+            <!-- @MAP: notes.map(note => ( -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift" data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-pdf text-primary text-xl"></i>
+                        </div>
+                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium" data-bind="note.semester">Semester 3</span>
+                    </div>
+                    <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="note.title">Data Structures & Algorithms</h4>
+                    <p class="text-muted-foreground text-sm mb-4" data-bind="note.description">Complete lecture notes covering arrays, linked lists, trees, and graph algorithms with examples.</p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs text-muted-foreground">
+                            <span data-bind="note.size">2.3 MB</span> • <span data-bind="note.pages">45 pages</span>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-download mr-1"></i> Download
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift" data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-powerpoint text-accent text-xl"></i>
+                        </div>
+                        <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-xs font-medium" data-bind="note.semester">Semester 4</span>
+                    </div>
+                    <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="note.title">Database Management Systems</h4>
+                    <p class="text-muted-foreground text-sm mb-4" data-bind="note.description">Comprehensive slides on RDBMS, SQL queries, normalization, and transaction management.</p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs text-muted-foreground">
+                            <span data-bind="note.size">4.1 MB</span> • <span data-bind="note.pages">68 slides</span>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-download mr-1"></i> Download
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift" data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-alt text-primary text-xl"></i>
+                        </div>
+                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium" data-bind="note.semester">Semester 2</span>
+                    </div>
+                    <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="note.title">Object-Oriented Programming</h4>
+                    <p class="text-muted-foreground text-sm mb-4" data-bind="note.description">Java programming concepts, inheritance, polymorphism, and design patterns with practical examples.</p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs text-muted-foreground">
+                            <span data-bind="note.size">1.8 MB</span> • <span data-bind="note.pages">38 pages</span>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-download mr-1"></i> Download
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift" data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-pdf text-accent text-xl"></i>
+                        </div>
+                        <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-xs font-medium" data-bind="note.semester">Semester 3</span>
+                    </div>
+                    <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="note.title">Computer Networks</h4>
+                    <p class="text-muted-foreground text-sm mb-4" data-bind="note.description">Network protocols, OSI model, TCP/IP, routing algorithms, and network security fundamentals.</p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs text-muted-foreground">
+                            <span data-bind="note.size">3.5 MB</span> • <span data-bind="note.pages">52 pages</span>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-download mr-1"></i> Download
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift" data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-code text-primary text-xl"></i>
+                        </div>
+                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium" data-bind="note.semester">Semester 4</span>
+                    </div>
+                    <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="note.title">Web Development</h4>
+                    <p class="text-muted-foreground text-sm mb-4" data-bind="note.description">HTML, CSS, JavaScript, React, and backend development with Node.js and databases.</p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs text-muted-foreground">
+                            <span data-bind="note.size">5.2 MB</span> • <span data-bind="note.pages">74 pages</span>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-download mr-1"></i> Download
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-card p-6 rounded-xl shadow-sm border border-border hover-lift" data-mock="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-pdf text-accent text-xl"></i>
+                        </div>
+                        <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-xs font-medium" data-bind="note.semester">Semester 1</span>
+                    </div>
+                    <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="note.title">Programming Fundamentals</h4>
+                    <p class="text-muted-foreground text-sm mb-4" data-bind="note.description">Introduction to programming concepts, C language basics, and problem-solving techniques.</p>
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs text-muted-foreground">
+                            <span data-bind="note.size">2.1 MB</span> • <span data-bind="note.pages">41 pages</span>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-download mr-1"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_MAP )) -->
+        </div>
+    </section>
+    <!-- @END_COMPONENT: NotesSection -->
+
+    <!-- Media Gallery Section -->
+    <!-- @COMPONENT: MediaGallery -->
+    <section id="media" class="py-20 bg-background">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-foreground mb-4">Media Gallery</h2>
+                <p class="text-muted-foreground">Capturing moments from events, workshops, and activities</p>
+            </div>
+            
+            <!-- Gallery Categories -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="bg-primary text-primary-foreground px-6 py-2 rounded-full font-medium hover:bg-primary/90 transition-colors">All</button>
+                <button class="bg-card text-foreground px-6 py-2 rounded-full font-medium hover:bg-primary hover:text-primary-foreground transition-colors border border-border">Events</button>
+                <button class="bg-card text-foreground px-6 py-2 rounded-full font-medium hover:bg-primary hover:text-primary-foreground transition-colors border border-border">Workshops</button>
+                <button class="bg-card text-foreground px-6 py-2 rounded-full font-medium hover:bg-primary hover:text-primary-foreground transition-colors border border-border">Campus Life</button>
+                <button class="bg-card text-foreground px-6 py-2 rounded-full font-medium hover:bg-primary hover:text-primary-foreground transition-colors border border-border">Awards</button>
+            </div>
+            
+            <!-- Gallery Grid -->
+            <!-- @MAP: mediaItems.map(media => ( -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Tech symposium audience and speakers on stage -->
+                <div class="relative group rounded-xl overflow-hidden shadow-sm hover-lift cursor-pointer" data-mock="true">
+                    <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300" alt="Tech symposium with speakers presenting" class="w-full h-64 object-cover transition-transform group-hover:scale-105" />
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors">
+                        <div class="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h4 class="font-semibold mb-1" data-bind="media.title">Tech Symposium 2024</h4>
+                            <p class="text-sm text-white/90" data-bind="media.category">Events</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Students working together in coding bootcamp -->
+                <div class="relative group rounded-xl overflow-hidden shadow-sm hover-lift cursor-pointer" data-mock="true">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300" alt="Students collaborating in coding workshop" class="w-full h-64 object-cover transition-transform group-hover:scale-105" />
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors">
+                        <div class="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h4 class="font-semibold mb-1" data-bind="media.title">Coding Bootcamp</h4>
+                            <p class="text-sm text-white/90" data-bind="media.category">Workshops</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Award ceremony with students receiving recognition -->
+                <div class="relative group rounded-xl overflow-hidden shadow-sm hover-lift cursor-pointer" data-mock="true">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300" alt="Students receiving awards at ceremony" class="w-full h-64 object-cover transition-transform group-hover:scale-105" />
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors">
+                        <div class="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h4 class="font-semibold mb-1" data-bind="media.title">Annual Awards Ceremony</h4>
+                            <p class="text-sm text-white/90" data-bind="media.category">Awards</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Students studying together in modern library space -->
+                <div class="relative group rounded-xl overflow-hidden shadow-sm hover-lift cursor-pointer" data-mock="true">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300" alt="Students studying in modern library" class="w-full h-64 object-cover transition-transform group-hover:scale-105" />
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors">
+                        <div class="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h4 class="font-semibold mb-1" data-bind="media.title">Campus Study Sessions</h4>
+                            <p class="text-sm text-white/90" data-bind="media.category">Campus Life</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI workshop with professor demonstrating machine learning -->
+                <div class="relative group rounded-xl overflow-hidden shadow-sm hover-lift cursor-pointer" data-mock="true">
+                    <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300" alt="Professor teaching AI concepts to students" class="w-full h-64 object-cover transition-transform group-hover:scale-105" />
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors">
+                        <div class="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h4 class="font-semibold mb-1" data-bind="media.title">AI Workshop Series</h4>
+                            <p class="text-sm text-white/90" data-bind="media.category">Workshops</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Graduation ceremony with computer science students -->
+                <div class="relative group rounded-xl overflow-hidden shadow-sm hover-lift cursor-pointer" data-mock="true">
+                    <img src="https://pixabay.com/get/g1af21bff6cc662cd54eef27acbb2ac0c699c88d10c0a3fbbe7871607af4559c55520c5179b9d173200c34a7e2e492561e7a9224af007af0143af21b5ef55bc60_1280.jpg" alt="Computer science graduation ceremony" class="w-full h-64 object-cover transition-transform group-hover:scale-105" />
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors">
+                        <div class="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h4 class="font-semibold mb-1" data-bind="media.title">Graduation Day 2024</h4>
+                            <p class="text-sm text-white/90" data-bind="media.category">Events</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_MAP )) -->
+            
+            <div class="text-center mt-12">
+                <button class="bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors hover-lift">
+                    View Full Gallery
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: MediaGallery -->
+
+    <!-- Contact Section -->
+    <!-- @COMPONENT: ContactSection -->
+    <section id="contact" class="py-20 bg-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-foreground mb-4">Get In Touch</h2>
+                <p class="text-muted-foreground">We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="bg-card p-8 rounded-xl shadow-sm border border-border">
+                    <h3 class="text-2xl font-bold text-foreground mb-6">Send us a Message</h3>
+                    <form class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-foreground mb-2">Full Name</label>
+                                <input type="text" id="name" name="name" class="w-full px-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring text-foreground" placeholder="Enter your full name" />
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-foreground mb-2">Email Address</label>
+                                <input type="email" id="email" name="email" class="w-full px-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring text-foreground" placeholder="Enter your email" />
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="subject" class="block text-sm font-medium text-foreground mb-2">Subject</label>
+                            <select id="subject" name="subject" class="w-full px-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring text-foreground">
+                                <option>Select a subject</option>
+                                <option>Admissions Inquiry</option>
+                                <option>Academic Information</option>
+                                <option>Research Collaboration</option>
+                                <option>General Question</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-foreground mb-2">Message</label>
+                            <textarea id="message" name="message" rows="6" class="w-full px-4 py-3 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring text-foreground resize-none" placeholder="Write your message here..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors hover-lift">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="space-y-8">
+                    <div class="bg-card p-8 rounded-xl shadow-sm border border-border">
+                        <h3 class="text-2xl font-bold text-foreground mb-6">Contact Information</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-map-marker-alt text-primary text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-foreground mb-1">Address</h4>
+                                    <p class="text-muted-foreground">Vishweshwarayya Institute of Engineering & Technology<br>Computer Science Department<br>Bangalore, Karnataka 560100</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-phone text-primary text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-foreground mb-1">Phone</h4>
+                                    <p class="text-muted-foreground">+91 80 2345 6789<br>+91 80 2345 6790</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-envelope text-primary text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-foreground mb-1">Email</h4>
+                                    <p class="text-muted-foreground">cs.dept@viet.edu.in<br>admissions@viet.edu.in</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-clock text-primary text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-foreground mb-1">Office Hours</h4>
+                                    <p class="text-muted-foreground">Monday - Friday: 9:00 AM - 5:00 PM<br>Saturday: 9:00 AM - 1:00 PM</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Campus Map -->
+                    <div class="bg-card p-8 rounded-xl shadow-sm border border-border">
+                        <h3 class="text-xl font-bold text-foreground mb-4">Campus Location</h3>
+                        <div class="bg-muted rounded-lg h-64 flex items-center justify-center">
+                            <div class="text-center text-muted-foreground">
+                                <i class="fas fa-map text-4xl mb-4"></i>
+                                <p><!-- @FUNCTIONALITY: Integrate Google Maps showing campus location --></p>
+                                <p>Interactive Campus Map</p>
+                                <p class="text-sm mt-2">Click to view detailed directions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ContactSection -->
+
+    <!-- Admin Panel Preview -->
+    <!-- @COMPONENT: AdminPanel -->
+    <section class="py-20 bg-background border-t border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-foreground mb-4">Admin Dashboard Preview</h2>
+                <p class="text-muted-foreground">Powerful content management system for faculty and administrators</p>
+            </div>
+            
+            <div class="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+                <!-- Admin Header -->
+                <div class="bg-primary text-primary-foreground p-6 border-b border-border">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 bg-primary-foreground/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-primary-foreground text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold">Admin Dashboard</h3>
+                                <p class="text-primary-foreground/80 text-sm">Content Management System</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-primary-foreground/80 text-sm">Welcome, Dr. Rajesh Kumar</span>
+                            <button class="bg-primary-foreground/20 text-primary-foreground px-4 py-2 rounded-lg text-sm hover:bg-primary-foreground/30 transition-colors">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Admin Navigation -->
+                <div class="bg-muted p-4 border-b border-border">
+                    <div class="flex space-x-6">
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium">Dashboard</button>
+                        <button class="text-muted-foreground hover:text-foreground px-4 py-2 text-sm font-medium">News Management</button>
+                        <button class="text-muted-foreground hover:text-foreground px-4 py-2 text-sm font-medium">Events</button>
+                        <button class="text-muted-foreground hover:text-foreground px-4 py-2 text-sm font-medium">Notes</button>
+                        <button class="text-muted-foreground hover:text-foreground px-4 py-2 text-sm font-medium">Media</button>
+                        <button class="text-muted-foreground hover:text-foreground px-4 py-2 text-sm font-medium">Users</button>
+                    </div>
+                </div>
+                
+                <!-- Dashboard Content -->
+                <div class="p-8">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-muted p-6 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-newspaper text-primary text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-foreground">24</p>
+                                    <p class="text-muted-foreground text-sm">News Articles</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-muted p-6 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt text-accent text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-foreground">8</p>
+                                    <p class="text-muted-foreground text-sm">Upcoming Events</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-muted p-6 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-book text-primary text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-foreground">156</p>
+                                    <p class="text-muted-foreground text-sm">Study Materials</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-muted p-6 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-photo-video text-accent text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-foreground">342</p>
+                                    <p class="text-muted-foreground text-sm">Media Items</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-muted p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold text-foreground mb-4">Quick Actions</h4>
+                            <div class="space-y-3">
+                                <button class="w-full bg-primary text-primary-foreground p-3 rounded-lg font-medium hover:bg-primary/90 transition-colors text-left">
+                                    <i class="fas fa-plus mr-2"></i> Add New Article
+                                </button>
+                                <button class="w-full bg-accent text-accent-foreground p-3 rounded-lg font-medium hover:bg-accent/90 transition-colors text-left">
+                                    <i class="fas fa-calendar-plus mr-2"></i> Create Event
+                                </button>
+                                <button class="w-full bg-card border border-border text-foreground p-3 rounded-lg font-medium hover:bg-muted transition-colors text-left">
+                                    <i class="fas fa-upload mr-2"></i> Upload Notes
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-muted p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold text-foreground mb-4">Recent Activity</h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-primary rounded-full"></div>
+                                    <span class="text-muted-foreground">News article "AI Workshop Success" published</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-accent rounded-full"></div>
+                                    <span class="text-muted-foreground">Event "Tech Symposium" updated</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-primary rounded-full"></div>
+                                    <span class="text-muted-foreground">12 new media files uploaded</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: AdminPanel -->
+
+    <!-- Footer -->
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-card border-t border-border py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-primary-foreground text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-foreground">VIET</h3>
+                            <p class="text-xs text-muted-foreground">Computer Department</p>
+                        </div>
+                    </div>
+                    <p class="text-muted-foreground text-sm mb-6">
+                        Pioneering excellence in computer science education since 1999. Shaping the future of technology through innovation and education.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-foreground mb-6">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#about" class="text-muted-foreground hover:text-primary transition-colors">About Department</a></li>
+                        <li><a href="#" class="text-muted-foreground hover:text-primary transition-colors">Admissions</a></li>
+                        <li><a href="#" class="text-muted-foreground hover:text-primary transition-colors">Academic Programs</a></li>
+                        <li><a href="#" class="text-muted-foreground hover:text-primary transition-colors">Research</a></li>
+                        <li><a href="#" class="text-muted-foreground hover:text-primary transition-colors">Career Services</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-foreground mb-6">Resources</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#notes" class="text-muted-foreground hover:text-primary transition-colors">Study Materials</a></li>
+                        <li><a href="#" class="text-muted-foreground hover:text-primary transition-colors">Online Library</a></li>
+                        <li><a href="#" class="text-muted-foreground hover:text-primary transition-colors">Student Portal</a></li>
+                        <li><a href="#" class="text-muted-foreground hover:text-primary transition-colors">Faculty Resources</a></li>
+                        <li><a href="#" class="text-muted-foreground hover:text-primary transition-colors">Alumni Network</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-foreground mb-6">Contact Info</h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-map-marker-alt text-muted-foreground mt-1"></i>
+                            <span class="text-muted-foreground">Bangalore, Karnataka 560100</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-phone text-muted-foreground"></i>
+                            <span class="text-muted-foreground">+91 80 2345 6789</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-envelope text-muted-foreground"></i>
+                            <span class="text-muted-foreground">cs.dept@viet.edu.in</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-muted-foreground text-sm">
+                    © 2024 Vishweshwarayya Institute of Engineering & Technology. All rights reserved.
+                </p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-muted-foreground hover:text-primary text-sm transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-muted-foreground hover:text-primary text-sm transition-colors">Terms of Service</a>
+                    <a href="#" class="text-muted-foreground hover:text-primary text-sm transition-colors">Accessibility</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        // TODO: Implement smooth scrolling navigation functionality
+        // TODO: Add mobile menu toggle functionality
+        // TODO: Implement search functionality
+        // TODO: Add form submission handling
+        // TODO: Implement gallery lightbox functionality
+        // TODO: Add admin authentication and dashboard routing
+        
+        (function() {
+            'use strict';
+            
+            // Simple smooth scrolling for navigation links
+            document.addEventListener('DOMContentLoaded', function() {
+                const navLinks = document.querySelectorAll('a[href^="#"]');
+                
+                navLinks.forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        const targetId = this.getAttribute('href').substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+                
+                // Simple gallery preview
+                const galleryItems = document.querySelectorAll('[data-mock="true"] img');
+                galleryItems.forEach(function(img) {
+                    img.addEventListener('click', function() {
+                        // TODO: Implement lightbox functionality
+                        console.log('Gallery item clicked:', this.alt);
+                    });
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
