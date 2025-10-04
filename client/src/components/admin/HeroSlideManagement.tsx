@@ -80,74 +80,32 @@ export default function HeroSlideManagement() {
 
   // Helper function to handle authentication errors with token refresh
   const handleAuthError = async (error: any, response?: Response) => {
-    console.log('Full error details:', { 
-      error, 
-      response, 
+    console.log('Auth error details:', { 
+      error: error?.message || String(error), 
       status: response?.status,
-      errorMessage: error?.message,
-      errorString: String(error)
+      hasResponse: !!response
     });
     
-    // Try to refresh token if it's expired
-    if (response?.status === 401 && 
-        (error.message?.includes('Token has expired') || error.message?.includes('expired'))) {
-      console.log('Token expired, attempting refresh...');
-      
-      try {
-        const oldToken = localStorage.getItem('viet_auth_token');
-        if (oldToken) {
-          const refreshResponse = await fetch('/api/auth/refresh', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ token: oldToken }),
-          });
-          
-          if (refreshResponse.ok) {
-            const refreshData = await refreshResponse.json();
-            localStorage.setItem('viet_auth_token', refreshData.token);
-            localStorage.setItem('viet_user_data', JSON.stringify(refreshData.user));
-            
-            console.log('Token refreshed successfully');
-            toast({
-              title: "Token Refreshed",
-              description: "Your session has been renewed. Please try again.",
-              variant: "default",
-            });
-            return false; // Don't logout, token was refreshed
-          }
-        }
-      } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError);
-      }
-    }
-    
-    // VERY specific conditions for logout - only on exact auth error messages
-    const isStrictAuthError = (
-      (response?.status === 401 && 
-       (error.message === 'Access token required' || error.message?.includes('Access token required'))) ||
-      (response?.status === 403 && 
-       (error.message === 'Admin access required' ||
-        error.message?.includes('Admin access required'))) ||
-      (response?.status === 401 && error.message?.includes('Invalid token'))
+    // Only logout for critical auth failures - be more lenient
+    const isCriticalAuthError = (
+      response?.status === 403 ||
+      (response?.status === 401 && error?.message?.includes('Invalid token')) ||
+      (response?.status === 401 && error?.message?.includes('Access token required'))
     );
     
-    console.log('Strict auth error check:', isStrictAuthError);
-    
-    // Only logout for very specific authentication failures
-    if (isStrictAuthError) {
-      console.log('Triggering logout due to auth error');
+    if (isCriticalAuthError) {
+      console.log('Critical auth error detected, logging out');
       toast({
-        title: "Session Expired",
-        description: "Your session has expired. Please log in again.",
+        title: "Authentication Required",
+        description: "Please log in again to continue.",
         variant: "destructive",
       });
       logout();
       return true;
     }
     
-    console.log('Not an auth error, keeping user logged in');
+    // For other errors, show a generic error but don't logout
+    console.log('Non-critical error, user stays logged in');
     return false;
   };
 
@@ -200,14 +158,14 @@ export default function HeroSlideManagement() {
       console.log('Create slide mutation error:', error);
       const wasAuthError = await handleAuthError(error, error.response);
       
-      // Always show error toast, regardless of auth status
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create hero slide. Please try again.",
-        variant: "destructive",
-      });
-      
-      console.log('Auth error handled:', wasAuthError);
+      // Only show error toast if not an auth error (which shows its own toast)
+      if (!wasAuthError) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to create hero slide. Please check your connection and try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -242,18 +200,17 @@ export default function HeroSlideManagement() {
         variant: "default",
       });
     },
-    onError: (error: any) => {
+    onError: async (error: any) => {
       console.log('Update slide mutation error:', error);
-      const wasAuthError = handleAuthError(error, error.response);
+      const wasAuthError = await handleAuthError(error, error.response);
       
-      // Always show error toast, regardless of auth status
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update hero slide. Please try again.",
-        variant: "destructive",
-      });
-      
-      console.log('Auth error handled:', wasAuthError);
+      if (!wasAuthError) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to update hero slide. Please check your connection and try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -283,18 +240,17 @@ export default function HeroSlideManagement() {
         variant: "default",
       });
     },
-    onError: (error: any) => {
+    onError: async (error: any) => {
       console.log('Delete slide mutation error:', error);
-      const wasAuthError = handleAuthError(error, error.response);
+      const wasAuthError = await handleAuthError(error, error.response);
       
-      // Always show error toast, regardless of auth status
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete hero slide. Please try again.",
-        variant: "destructive",
-      });
-      
-      console.log('Auth error handled:', wasAuthError);
+      if (!wasAuthError) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to delete hero slide. Please check your connection and try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 

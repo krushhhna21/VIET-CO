@@ -1,12 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import type { Media } from "@shared/schema";
-import React from "react";
 
-export default function MediaGallery() {
+const MediaGallery: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { data: media, isLoading } = useQuery<Media[]>({
     queryKey:
@@ -112,4 +111,6 @@ export default function MediaGallery() {
       </div>
     </section>
   );
-}
+};
+
+export default React.memo(MediaGallery);

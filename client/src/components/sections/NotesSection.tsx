@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Download, FileText, FileImage, Code } from "lucide-react";
 import { Link } from "wouter";
 import type { Note } from "@shared/schema";
-import React from "react";
 
-export default function NotesSection() {
+const NotesSection: React.FC = () => {
   const [selectedSemester, setSelectedSemester] = useState<string>("all");
   const { data: notes, isLoading } = useQuery<Note[]>({
     queryKey:
@@ -141,4 +140,6 @@ export default function NotesSection() {
       </div>
     </section>
   );
-}
+};
+
+export default React.memo(NotesSection);

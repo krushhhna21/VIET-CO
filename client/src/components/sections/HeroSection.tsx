@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from '@tanstack/react-query';
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronDown } from "lucide-react";
 
 interface HeroSlide {
   id: string;
@@ -16,7 +16,7 @@ interface HeroSlide {
   updatedAt: string;
 }
 
-export default function HeroSection() {
+const HeroSection: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVirtualTourActive, setIsVirtualTourActive] = useState(false);
   const [tourProgress, setTourProgress] = useState(0);
@@ -166,7 +166,7 @@ export default function HeroSection() {
         
         {/* Loading Content */}
         <div className="relative z-10 text-center text-primary-foreground max-w-6xl mx-auto px-4">
-          <div className="glass-effect p-8 rounded-3xl mb-8 min-h-[500px] flex flex-col justify-center">
+          <div className="glass-premium p-8 rounded-3xl mb-8 min-h-[500px] flex flex-col justify-center">
             <Skeleton className="h-6 w-24 mb-4 mx-auto bg-primary/20" />
             <Skeleton className="h-20 w-full mb-6 bg-primary/20" />
             <Skeleton className="h-16 w-3/4 mb-8 mx-auto bg-primary/20" />
@@ -221,7 +221,7 @@ export default function HeroSection() {
       
       {/* Premium Hero Content with Slideshow */}
       <div className="relative z-10 text-center text-primary-foreground max-w-6xl mx-auto px-4">
-        <div className="glass-effect p-8 rounded-3xl mb-8 min-h-[500px] flex flex-col justify-center relative overflow-hidden">
+        <div className="glass-premium p-8 rounded-3xl mb-8 min-h-[500px] flex flex-col justify-center relative overflow-hidden">
           {/* Slide Indicator Dots */}
           <div className="absolute top-6 right-6 flex space-x-2">
             {slides.map((_, index) => (
@@ -382,4 +382,6 @@ export default function HeroSection() {
       </button>
     </section>
   );
-}
+};
+
+export default HeroSection;

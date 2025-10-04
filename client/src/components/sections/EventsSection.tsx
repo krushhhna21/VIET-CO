@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Calendar, Clock, MapPin } from "lucide-react";
 import { Link } from "wouter";
 import type { Event } from "@shared/schema";
 
-export default function EventsSection() {
+const EventsSection: React.FC = () => {
   const { data: events, isLoading } = useQuery<Event[]>({
     queryKey: ['/api/events?published=true'],
   });
@@ -160,4 +160,6 @@ export default function EventsSection() {
       </div>
     </section>
   );
-}
+};
+
+export default React.memo(EventsSection);
