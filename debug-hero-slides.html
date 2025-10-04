@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Hero Slides</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; border: 1px solid #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Hero Slides Debug Page</h1>
+    
+    <h2>Authentication Status</h2>
+    <div id="auth-status" class="test-result info">Checking...</div>
+    
+    <h2>Hero Slides API Test</h2>
+    <div id="api-test" class="test-result info">Testing...</div>
+    
+    <h2>Local Storage</h2>
+    <div id="storage-info" class="test-result info">Checking...</div>
+    
+    <h2>Login Test</h2>
+    <div>
+        <input type="text" id="username" placeholder="Username" value="HOD@CO">
+        <input type="password" id="password" placeholder="Password" value="VIET@CO1095">
+        <button onclick="testLogin()">Login</button>
+    </div>
+    <div id="login-result" class="test-result info"></div>
+
+    <script>
+        // Check authentication status
+        function checkAuth() {
+            const token = localStorage.getItem('viet_auth_token');
+            const user = localStorage.getItem('viet_user_data');
+            
+            let authHtml = '';
+            if (token) {
+                authHtml += `<strong>Token found:</strong> ${token.substring(0, 20)}...<br>`;
+                try {
+                    const userData = JSON.parse(user);
+                    authHtml += `<strong>User:</strong> ${userData.username} (${userData.role})`;
+                } catch (e) {
+                    authHtml += `<strong>User data error:</strong> ${e.message}`;
+                }
+            } else {
+                authHtml = '<strong>No authentication token found</strong>';
+            }
+            
+            document.getElementById('auth-status').innerHTML = authHtml;
+            document.getElementById('auth-status').className = token ? 'test-result success' : 'test-result error';
+        }
+
+        // Test API access
+        async function testAPI() {
+            try {
+                const token = localStorage.getItem('viet_auth_token');
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                
+                const response = await fetch('/api/hero-slides', {
+                    method: 'GET',
+                    headers: headers
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('api-test').innerHTML = `
+                        <strong>API Success!</strong><br>
+                        Status: ${response.status}<br>
+                        Data: <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    document.getElementById('api-test').className = 'test-result success';
+                } else {
+                    document.getElementById('api-test').innerHTML = `
+                        <strong>API Error:</strong><br>
+                        Status: ${response.status}<br>
+                        Message: ${data.message || 'Unknown error'}<br>
+                        Response: <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    document.getElementById('api-test').className = 'test-result error';
+                }
+            } catch (error) {
+                document.getElementById('api-test').innerHTML = `
+                    <strong>Network Error:</strong> ${error.message}
+                `;
+                document.getElementById('api-test').className = 'test-result error';
+            }
+        }
+
+        // Check local storage
+        function checkStorage() {
+            const allKeys = Object.keys(localStorage);
+            const vietKeys = allKeys.filter(key => key.includes('viet'));
+            
+            let storageHtml = `<strong>All localStorage keys:</strong><br>${allKeys.join(', ')}<br><br>`;
+            storageHtml += `<strong>VIET-related keys:</strong><br>`;
+            
+            vietKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                storageHtml += `${key}: ${value ? value.substring(0, 100) + '...' : 'null'}<br>`;
+            });
+            
+            document.getElementById('storage-info').innerHTML = storageHtml;
+        }
+
+        // Test login
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            document.getElementById('login-result').innerHTML = 'Logging in...';
+            document.getElementById('login-result').className = 'test-result info';
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('viet_auth_token', data.token);
+                    localStorage.setItem('viet_user_data', JSON.stringify(data.user));
+                    
+                    document.getElementById('login-result').innerHTML = `
+                        <strong>Login Success!</strong><br>
+                        User: ${data.user.username}<br>
+                        Role: ${data.user.role}<br>
+                        Token: ${data.token.substring(0, 20)}...
+                    `;
+                    document.getElementById('login-result').className = 'test-result success';
+                    
+                    // Refresh other tests
+                    checkAuth();
+                    testAPI();
+                } else {
+                    document.getElementById('login-result').innerHTML = `
+                        <strong>Login Failed:</strong><br>
+                        Status: ${response.status}<br>
+                        Message: ${data.message || 'Unknown error'}
+                    `;
+                    document.getElementById('login-result').className = 'test-result error';
+                }
+            } catch (error) {
+                document.getElementById('login-result').innerHTML = `
+                    <strong>Login Error:</strong> ${error.message}
+                `;
+                document.getElementById('login-result').className = 'test-result error';
+            }
+        }
+
+        // Initialize tests
+        checkAuth();
+        checkStorage();
+        testAPI();
+    </script>
+</body>
+</html>

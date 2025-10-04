@@ -159,7 +159,7 @@ export default function HeroSlideManagement() {
   // Create slide mutation
   const createSlideMutation = useMutation({
     mutationFn: async (slideData: SlideFormData) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('viet_auth_token');
       const response = await fetch('/api/hero-slides', {
         method: 'POST',
         headers: {
@@ -204,7 +204,7 @@ export default function HeroSlideManagement() {
   // Update slide mutation
   const updateSlideMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<SlideFormData> }) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('viet_auth_token');
       const response = await fetch(`/api/hero-slides/${id}`, {
         method: 'PUT',
         headers: {
@@ -250,7 +250,7 @@ export default function HeroSlideManagement() {
   // Delete slide mutation
   const deleteSlideMutation = useMutation({
     mutationFn: async (id: string) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('viet_auth_token');
       const response = await fetch(`/api/hero-slides/${id}`, {
         method: 'DELETE',
         headers: {
