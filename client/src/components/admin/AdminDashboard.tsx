@@ -20,6 +20,8 @@ import EventManagement from './EventManagement';
 import NotesManagement from './NotesManagement';
 import MediaManagement from './MediaManagement';
 import HeroSlideManagement from './HeroSlideManagement';
+import HeroSlideManagementDebug from './HeroSlideManagementDebug';
+import HeroSlideManagementFixed from './HeroSlideManagementFixed';
 
 interface DashboardStats {
   newsCount: number;
@@ -118,7 +120,7 @@ export default function AdminDashboard() {
         </TabsList>
 
         <TabsContent value="hero-slides">
-          <HeroSlideManagement />
+          <HeroSlideManagementFixed />
         </TabsContent>
 
         <TabsContent value="overview" className="space-y-8">
