@@ -19,8 +19,6 @@ import NewsManagement from './NewsManagement';
 import EventManagement from './EventManagement';
 import NotesManagement from './NotesManagement';
 import MediaManagement from './MediaManagement';
-import HeroSlideManagement from './HeroSlideManagement';
-import HeroSlideManagementDebug from './HeroSlideManagementDebug';
 import HeroSlideManagementFixed from './HeroSlideManagementFixed';
 
 interface DashboardStats {
