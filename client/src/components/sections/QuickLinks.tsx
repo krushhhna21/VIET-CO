@@ -1,8 +1,9 @@
+import React from "react";
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Newspaper, Calendar, Book, Camera } from "lucide-react";
 
-export default function QuickLinks() {
+const QuickLinks: React.FC = () => {
   const quickLinks = [
     {
       title: "Latest News",
@@ -64,4 +65,6 @@ export default function QuickLinks() {
       </div>
     </section>
   );
-}
+};
+
+export default React.memo(QuickLinks);

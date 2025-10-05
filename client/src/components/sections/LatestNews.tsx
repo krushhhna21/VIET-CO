@@ -1,12 +1,14 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Calendar } from "lucide-react";
 import { Link } from "wouter";
 import type { News } from "@shared/schema";
 
-export default function LatestNews() {
+const LatestNews: React.FC = () => {
   const { data: news, isLoading } = useQuery<News[]>({
     queryKey: ['/api/news?published=true'],
   });
@@ -93,4 +95,6 @@ export default function LatestNews() {
       </div>
     </section>
   );
-}
+};
+
+export default React.memo(LatestNews);

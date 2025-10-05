@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ interface ContactFormData {
   message: string;
 }
 
-export default function ContactSection() {
+const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -227,4 +227,6 @@ export default function ContactSection() {
       </div>
     </section>
   );
-}
+};
+
+export default React.memo(ContactSection);

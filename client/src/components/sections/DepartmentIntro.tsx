@@ -1,6 +1,7 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 
-export default function DepartmentIntro() {
+const DepartmentIntro: React.FC = () => {
   return (
     <section id="department-intro" className="py-32 bg-background relative overflow-hidden" data-testid="department-intro">
       {/* Background Elements */}
@@ -66,4 +67,6 @@ export default function DepartmentIntro() {
       </div>
     </section>
   );
-}
+};
+
+export default React.memo(DepartmentIntro);

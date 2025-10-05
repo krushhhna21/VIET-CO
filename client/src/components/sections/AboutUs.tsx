@@ -1,10 +1,11 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Target, Eye, Monitor, FlaskConical, BookOpen } from "lucide-react";
 import type { Faculty } from "@shared/schema";
 
-export default function AboutUs() {
+const AboutUs: React.FC = () => {
   const { data: faculty, isLoading } = useQuery<Faculty[]>({
     queryKey: ['/api/faculty'],
   });
@@ -137,4 +138,6 @@ export default function AboutUs() {
       </div>
     </section>
   );
-}
+};
+
+export default React.memo(AboutUs);
