@@ -14,22 +14,11 @@ const authenticateToken = (req: Request, res: Response, next: any) => {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
-  }
-
-  // Validate token format (basic check for JWT structure)
-  if (!token.includes('.') || token.split('.').length !== 3) {
-    return res.status(401).json({ message: 'Invalid token format' });
+    return res.sendStatus(401);
   }
 
   jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-    if (err) {
-      console.error('Token verification error:', err.message);
-      if (err.name === 'TokenExpiredError') {
-        return res.status(401).json({ message: 'Token expired' });
-      }
-      return res.status(403).json({ message: 'Invalid token' });
-    }
+    if (err) return res.sendStatus(403);
     (req as any).user = user;
     next();
   });
@@ -481,21 +470,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { published } = req.query;
       const publishedFilter = published === 'true' ? true : published === 'false' ? false : undefined;
-      const slides = await storage.getAllHeroSlides(publishedFilter);
-      res.json(slides);
+      const heroSlides = await storage.getAllHeroSlides(publishedFilter);
+      res.json(heroSlides);
     } catch (error) {
       console.error("Get hero slides error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
 
+  app.get("/api/hero-slides/:id", async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const heroSlide = await storage.getHeroSlideById(id);
+      
+      if (!heroSlide) {
+        return res.status(404).json({ message: "Hero slide not found" });
+      }
+      
+      res.json(heroSlide);
+    } catch (error) {
+      console.error("Get hero slide by id error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   app.post("/api/hero-slides", authenticateAdmin, async (req: Request, res: Response) => {
     try {
-      const slideData = insertHeroSlideSchema.parse(req.body);
-      const slide = await storage.createHeroSlide(slideData);
-      res.status(201).json(slide);
+      console.log('Creating hero slide with data:', req.body);
+      
+      // Transform frontend data to match database schema
+      const transformedData = {
+        title: req.body.title,
+        subtitle: req.body.subtitle,
+        description: req.body.description,
+        backgroundImage: req.body.backgroundImage || '/default-hero-bg.jpg', // Default background
+        ctaText: req.body.ctaText || 'Learn More',
+        ctaLink: req.body.ctaLink || '#',
+        order: req.body.order || 0,
+        published: req.body.isActive !== undefined ? req.body.isActive : true,
+      };
+      
+      const heroSlideData = insertHeroSlideSchema.parse(transformedData);
+      const heroSlide = await storage.createHeroSlide(heroSlideData);
+      
+      // Transform back to frontend format
+      const responseData = {
+        ...heroSlide,
+        type: req.body.type || 'main',
+        isActive: heroSlide.published,
+      };
+      
+      res.status(201).json(responseData);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("Hero slide validation error:", error.errors);
         return res.status(400).json({ message: "Invalid input", errors: error.errors });
       }
       console.error("Create hero slide error:", error);
@@ -506,14 +534,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/hero-slides/:id", authenticateAdmin, async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const updateData = req.body;
-      const slide = await storage.updateHeroSlide(id, updateData);
+      console.log('Updating hero slide with data:', req.body);
       
-      if (!slide) {
+      // Transform frontend data to match database schema
+      const transformedData: any = {};
+      if (req.body.title !== undefined) transformedData.title = req.body.title;
+      if (req.body.subtitle !== undefined) transformedData.subtitle = req.body.subtitle;
+      if (req.body.description !== undefined) transformedData.description = req.body.description;
+      if (req.body.backgroundImage !== undefined) transformedData.backgroundImage = req.body.backgroundImage;
+      if (req.body.ctaText !== undefined) transformedData.ctaText = req.body.ctaText;
+      if (req.body.ctaLink !== undefined) transformedData.ctaLink = req.body.ctaLink;
+      if (req.body.order !== undefined) transformedData.order = req.body.order;
+      if (req.body.isActive !== undefined) transformedData.published = req.body.isActive;
+      
+      const heroSlide = await storage.updateHeroSlide(id, transformedData);
+      
+      if (!heroSlide) {
         return res.status(404).json({ message: "Hero slide not found" });
       }
       
-      res.json(slide);
+      // Transform back to frontend format
+      const responseData = {
+        ...heroSlide,
+        type: req.body.type || 'main',
+        isActive: heroSlide.published,
+      };
+      
+      res.json(responseData);
     } catch (error) {
       console.error("Update hero slide error:", error);
       res.status(500).json({ message: "Internal server error" });

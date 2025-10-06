@@ -32,6 +32,9 @@ interface HeroSlide {
   type: 'main' | 'events' | 'news' | 'achievement' | 'partnership';
   isActive: boolean;
   order: number;
+  backgroundImage?: string;
+  ctaText?: string;
+  ctaLink?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -43,6 +46,9 @@ interface SlideFormData {
   type: 'main' | 'events' | 'news' | 'achievement' | 'partnership';
   isActive: boolean;
   order: number;
+  backgroundImage?: string;
+  ctaText?: string;
+  ctaLink?: string;
 }
 
 const slideTypeIcons = {
@@ -310,6 +316,9 @@ const HeroSlideManagementFixed: React.FC = () => {
       type: 'main',
       isActive: true,
       order: slides ? slides.length + 1 : 1,
+      backgroundImage: '',
+      ctaText: 'Learn More',
+      ctaLink: '#',
     });
   };
 
@@ -328,6 +337,9 @@ const HeroSlideManagementFixed: React.FC = () => {
       type: slide.type,
       isActive: slide.isActive,
       order: slide.order,
+      backgroundImage: slide.backgroundImage || '',
+      ctaText: slide.ctaText || 'Learn More',
+      ctaLink: slide.ctaLink || '#',
     });
     setIsModalOpen(true);
   };
@@ -437,6 +449,37 @@ const HeroSlideManagementFixed: React.FC = () => {
               rows={3}
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="backgroundImage">Background Image URL</Label>
+            <Input
+              id="backgroundImage"
+              value={formData.backgroundImage || ''}
+              onChange={(e) => setFormData({ ...formData, backgroundImage: e.target.value })}
+              placeholder="Enter background image URL (optional)"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="ctaText">Call to Action Text</Label>
+              <Input
+                id="ctaText"
+                value={formData.ctaText || ''}
+                onChange={(e) => setFormData({ ...formData, ctaText: e.target.value })}
+                placeholder="e.g. Learn More"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ctaLink">Call to Action Link</Label>
+              <Input
+                id="ctaLink"
+                value={formData.ctaLink || ''}
+                onChange={(e) => setFormData({ ...formData, ctaLink: e.target.value })}
+                placeholder="e.g. /about"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
