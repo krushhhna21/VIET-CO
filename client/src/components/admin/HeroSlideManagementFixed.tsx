@@ -502,7 +502,7 @@ const HeroSlideManagementFixed: React.FC = () => {
       <div className="grid gap-4">
         {slides && slides.length > 0 ? (
           slides.map((slide) => {
-            const IconComponent = slideTypeIcons[slide.type];
+            const IconComponent = slideTypeIcons[slide.type] || Monitor;
             return (
               <Card key={slide.id} className={`${!slide.isActive ? 'opacity-60' : ''}`}>
                 <CardContent className="p-6">
@@ -515,7 +515,7 @@ const HeroSlideManagementFixed: React.FC = () => {
                         <div className="flex items-center space-x-3 mb-2">
                           <h3 className="text-lg font-semibold text-foreground">{slide.title}</h3>
                           <Badge variant={slide.type === 'main' ? 'default' : 'secondary'}>
-                            {slideTypeLabels[slide.type]}
+                            {slideTypeLabels[slide.type] || 'Unknown Type'}
                           </Badge>
                           {slide.isActive ? (
                             <Badge variant="outline" className="text-green-600 border-green-600">
