@@ -21,9 +21,22 @@ const HeroSection: React.FC = () => {
   const [isVirtualTourActive, setIsVirtualTourActive] = useState(false);
   const [tourProgress, setTourProgress] = useState(0);
 
-  // Fetch hero slides from API
+  // Fetch hero slides from API with published=true filter
   const { data: apiSlides, isLoading } = useQuery<HeroSlide[]>({
-    queryKey: ['/api/hero-slides'],
+    queryKey: ['/api/hero-slides', { published: true }],
+    queryFn: async () => {
+      const response = await fetch('/api/hero-slides?published=true');
+      if (!response.ok) {
+        throw new Error('Failed to fetch hero slides');
+      }
+      const slides = await response.json();
+      // Transform backend data to frontend format
+      return slides.map((slide: any) => ({
+        ...slide,
+        isActive: slide.published,
+        type: slide.type || 'main', // Ensure type is always defined
+      }));
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 

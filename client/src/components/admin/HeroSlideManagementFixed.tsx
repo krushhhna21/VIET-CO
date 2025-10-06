@@ -117,9 +117,12 @@ const HeroSlideManagementFixed: React.FC = () => {
     title: '',
     subtitle: '',
     description: '',
-    type: 'main',
-    isActive: true,
+    type: 'main', // Always initialize with a valid type
+    isActive: true, // Always initialize with a valid boolean
     order: 1,
+    backgroundImage: '',
+    ctaText: 'Learn More',
+    ctaLink: '#',
   });
 
   const queryClient = useQueryClient();
@@ -159,6 +162,19 @@ const HeroSlideManagementFixed: React.FC = () => {
   // Fetch hero slides
   const { data: slides, isLoading, error } = useQuery<HeroSlide[]>({
     queryKey: ['/api/hero-slides'],
+    queryFn: async () => {
+      const response = await fetch('/api/hero-slides');
+      if (!response.ok) {
+        throw new Error('Failed to fetch hero slides');
+      }
+      const slides = await response.json();
+      // Transform backend data to frontend format
+      return slides.map((slide: any) => ({
+        ...slide,
+        isActive: slide.published !== undefined ? slide.published : slide.isActive,
+        type: slide.type || 'main', // Ensure type is always defined
+      }));
+    },
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
@@ -313,8 +329,8 @@ const HeroSlideManagementFixed: React.FC = () => {
       title: '',
       subtitle: '',
       description: '',
-      type: 'main',
-      isActive: true,
+      type: 'main', // Always set a default type
+      isActive: true, // Always set a default boolean value
       order: slides ? slides.length + 1 : 1,
       backgroundImage: '',
       ctaText: 'Learn More',
@@ -331,12 +347,12 @@ const HeroSlideManagementFixed: React.FC = () => {
   const handleEdit = (slide: HeroSlide) => {
     setEditingSlide(slide);
     setFormData({
-      title: slide.title,
-      subtitle: slide.subtitle,
-      description: slide.description,
-      type: slide.type,
-      isActive: slide.isActive,
-      order: slide.order,
+      title: slide.title || '',
+      subtitle: slide.subtitle || '',
+      description: slide.description || '',
+      type: slide.type || 'main', // Ensure type is always defined
+      isActive: slide.isActive !== undefined ? slide.isActive : true, // Ensure boolean
+      order: slide.order || 1,
       backgroundImage: slide.backgroundImage || '',
       ctaText: slide.ctaText || 'Learn More',
       ctaLink: slide.ctaLink || '#',

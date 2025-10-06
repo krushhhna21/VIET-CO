@@ -471,7 +471,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { published } = req.query;
       const publishedFilter = published === 'true' ? true : published === 'false' ? false : undefined;
       const heroSlides = await storage.getAllHeroSlides(publishedFilter);
-      res.json(heroSlides);
+      
+      // Transform backend data to frontend format
+      const transformedSlides = heroSlides.map(slide => ({
+        ...slide,
+        isActive: slide.published,
+        type: 'main', // Default type since we don't store this in DB
+      }));
+      
+      res.json(transformedSlides);
     } catch (error) {
       console.error("Get hero slides error:", error);
       res.status(500).json({ message: "Internal server error" });
