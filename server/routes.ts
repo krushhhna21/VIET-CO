@@ -6,19 +6,36 @@ import jwt from "jsonwebtoken";
 import { insertUserSchema, insertFacultySchema, insertNewsSchema, insertEventSchema, insertNoteSchema, insertMediaSchema, insertContactSchema, insertHeroSlideSchema } from "@shared/schema";
 import { z } from "zod";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET || "your-super-secure-jwt-secret-key-for-viet-college-2025";
+const IS_PROD = process.env.NODE_ENV === 'production';
+const DEBUG_ENABLED = !IS_PROD && process.env.DEBUG_LOGS !== 'false';
 
+const dlog = (...args: any[]) => { if (DEBUG_ENABLED) console.log('[DEBUG]', ...args); };
+if (DEBUG_ENABLED) { console.log('JWT secret configured:', JWT_SECRET ? 'YES' : 'NO'); }
 // Middleware for authentication
 const authenticateToken = (req: Request, res: Response, next: any) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-
+  dlog('authenticateToken - Auth header present:', !!authHeader);
+  dlog('authenticateToken - Token present:', !!token);
+  dlog('authenticateToken - JWT_SECRET available:', JWT_SECRET ? 'YES' : 'NO');
   if (!token) {
-    return res.sendStatus(401);
+    dlog('authenticateToken - No token provided');
+    return res.status(401).json({ message: "Access token required" });
   }
-
   jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-    if (err) return res.sendStatus(403);
+    if (err) {
+      dlog('authenticateToken - JWT verify error:', err.message);
+      dlog('authenticateToken - JWT error name:', err.name);
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: "Token has expired", code: "TOKEN_EXPIRED" });
+      } else if (err.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: "Invalid token format", code: "INVALID_TOKEN" });
+      } else {
+        return res.status(403).json({ message: "Invalid or expired token", code: "TOKEN_INVALID" });
+      }
+    }
+    dlog('authenticateToken - JWT verify success, user id & role:', user?.id, user?.role);
     (req as any).user = user;
     next();
   });
@@ -27,14 +44,168 @@ const authenticateToken = (req: Request, res: Response, next: any) => {
 // Middleware for admin authentication
 const authenticateAdmin = (req: Request, res: Response, next: any) => {
   authenticateToken(req, res, () => {
-    if ((req as any).user.role !== 'admin') {
-      return res.sendStatus(403);
+    const user = (req as any).user;
+    dlog('authenticateAdmin - User role:', user?.role);
+    if (user?.role !== 'admin') {
+      dlog('authenticateAdmin - Access denied, not admin');
+      return res.status(403).json({ message: "Admin access required" });
     }
+    dlog('authenticateAdmin - Admin access granted');
     next();
   });
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Hero Slides API
+  app.get("/api/hero-slides", async (_req: Request, res: Response) => {
+    try {
+      const slides = await storage.getAllHeroSlides();
+      res.json(slides);
+    } catch (error) {
+      console.error("Get hero slides error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/hero-slides", authenticateAdmin, async (req: Request, res: Response) => {
+    dlog('POST /api/hero-slides - Request body keys:', Object.keys(req.body || {}));
+    dlog('POST /api/hero-slides - User from token id/role:', (req as any).user?.id, (req as any).user?.role);
+    try {
+      // Transform frontend shape to DB schema expectations
+      const transformedData = {
+        title: req.body.title,
+        subtitle: req.body.subtitle,
+        description: req.body.description,
+        backgroundImage: req.body.backgroundImage || '/default-hero-bg.jpg',
+        ctaText: req.body.ctaText || 'Learn More',
+        ctaLink: req.body.ctaLink || '#',
+        order: req.body.order || 0,
+        published: req.body.isActive !== undefined ? req.body.isActive : true,
+      };
+      const slideData = insertHeroSlideSchema.parse(transformedData);
+      dlog('POST /api/hero-slides - Parsed slide data title:', slideData?.title);
+      const slide = await storage.createHeroSlide(slideData);
+      dlog('POST /api/hero-slides - Created slide id:', slide?.id);
+      const responseData = { ...slide, type: req.body.type || 'main', isActive: slide.published };
+      res.status(201).json(responseData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        dlog('POST /api/hero-slides - Validation error count:', error.errors.length);
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      console.error("Create hero slide error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.put("/api/hero-slides/:id", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      dlog('PUT /api/hero-slides/:id - Updating slide', id);
+      const transformedData: any = {};
+      if (req.body.title !== undefined) transformedData.title = req.body.title;
+      if (req.body.subtitle !== undefined) transformedData.subtitle = req.body.subtitle;
+      if (req.body.description !== undefined) transformedData.description = req.body.description;
+      if (req.body.backgroundImage !== undefined) transformedData.backgroundImage = req.body.backgroundImage;
+      if (req.body.ctaText !== undefined) transformedData.ctaText = req.body.ctaText;
+      if (req.body.ctaLink !== undefined) transformedData.ctaLink = req.body.ctaLink;
+      if (req.body.order !== undefined) transformedData.order = req.body.order;
+      if (req.body.isActive !== undefined) transformedData.published = req.body.isActive;
+      const slide = await storage.updateHeroSlide(id, transformedData);
+      if (!slide) return res.status(404).json({ message: "Hero slide not found" });
+      const responseData = { ...slide, type: req.body.type || 'main', isActive: slide.published };
+      res.json(responseData);
+    } catch (error) {
+      console.error("Update hero slide error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/hero-slides/:id", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      dlog('DELETE /api/hero-slides/:id - Deleting slide', id);
+      const deleted = await storage.deleteHeroSlide(id);
+      if (!deleted) return res.status(404).json({ message: "Hero slide not found" });
+      res.json({ message: "Hero slide deleted successfully" });
+    } catch (error) {
+      console.error("Delete hero slide error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  // Token refresh endpoint
+  app.post("/api/auth/refresh", async (req: Request, res: Response) => {
+    try {
+      const { token: oldToken } = req.body;
+      
+      if (!oldToken) {
+        return res.status(400).json({ message: "Token required" });
+      }
+
+      // Verify the old token (even if expired)
+      jwt.verify(oldToken, JWT_SECRET, { ignoreExpiration: true }, async (err: any, decoded: any) => {
+        if (err && err.name !== 'TokenExpiredError') {
+          return res.status(401).json({ message: "Invalid token" });
+        }
+
+        // Get fresh user data
+        const user = await storage.getUserByUsername(decoded.username);
+        if (!user) {
+          return res.status(401).json({ message: "User not found" });
+        }
+
+        // Generate new token
+        const newToken = jwt.sign(
+          { id: user.id, username: user.username, role: user.role },
+          JWT_SECRET,
+          { expiresIn: '7d' }
+        );
+
+        res.json({ 
+          token: newToken, 
+          user: { 
+            id: user.id, 
+            username: user.username, 
+            email: user.email, 
+            role: user.role 
+          } 
+        });
+      });
+    } catch (error) {
+      console.error("Token refresh error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Test endpoint to verify JWT token
+  app.get("/api/auth/verify", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+  dlog('Token verification successful for user id:', user?.id);
+      res.json({ 
+        success: true, 
+        user,
+        message: "Token is valid",
+        jwtSecret: JWT_SECRET ? 'CONFIGURED' : 'NOT_CONFIGURED'
+      });
+    } catch (error) {
+      console.error("Token verification error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Debug endpoint (only registered in non-production & admin protected)
+  if (!IS_PROD) {
+    app.get("/api/debug/jwt", authenticateAdmin, async (_req: Request, res: Response) => {
+      res.json({
+        jwtSecretConfigured: !!JWT_SECRET,
+        jwtSecretLength: JWT_SECRET ? JWT_SECRET.length : 0,
+        environment: process.env.NODE_ENV || 'development'
+      });
+    });
+  }
+
+// end merge artifact cleanup
   // Authentication routes
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
@@ -57,9 +228,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const token = jwt.sign(
         { id: user.id, username: user.username, role: user.role },
         JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '7d' }
       );
-
+      dlog('Login successful - user:', user.username);
+      dlog('Token generated with JWT_SECRET configured:', !!JWT_SECRET);
       res.json({ 
         token, 
         user: { 
@@ -465,131 +637,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Hero Slides routes
-  app.get("/api/hero-slides", async (req: Request, res: Response) => {
-    try {
-      const { published } = req.query;
-      const publishedFilter = published === 'true' ? true : published === 'false' ? false : undefined;
-      const heroSlides = await storage.getAllHeroSlides(publishedFilter);
-      
-      // Transform backend data to frontend format
-      const transformedSlides = heroSlides.map(slide => ({
-        ...slide,
-        isActive: slide.published,
-        type: 'main', // Default type since we don't store this in DB
-      }));
-      
-      res.json(transformedSlides);
-    } catch (error) {
-      console.error("Get hero slides error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  app.get("/api/hero-slides/:id", async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const heroSlide = await storage.getHeroSlideById(id);
-      
-      if (!heroSlide) {
-        return res.status(404).json({ message: "Hero slide not found" });
-      }
-      
-      res.json(heroSlide);
-    } catch (error) {
-      console.error("Get hero slide by id error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  app.post("/api/hero-slides", authenticateAdmin, async (req: Request, res: Response) => {
-    try {
-      console.log('Creating hero slide with data:', req.body);
-      
-      // Transform frontend data to match database schema
-      const transformedData = {
-        title: req.body.title,
-        subtitle: req.body.subtitle,
-        description: req.body.description,
-        backgroundImage: req.body.backgroundImage || '/default-hero-bg.jpg', // Default background
-        ctaText: req.body.ctaText || 'Learn More',
-        ctaLink: req.body.ctaLink || '#',
-        order: req.body.order || 0,
-        published: req.body.isActive !== undefined ? req.body.isActive : true,
-      };
-      
-      const heroSlideData = insertHeroSlideSchema.parse(transformedData);
-      const heroSlide = await storage.createHeroSlide(heroSlideData);
-      
-      // Transform back to frontend format
-      const responseData = {
-        ...heroSlide,
-        type: req.body.type || 'main',
-        isActive: heroSlide.published,
-      };
-      
-      res.status(201).json(responseData);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        console.error("Hero slide validation error:", error.errors);
-        return res.status(400).json({ message: "Invalid input", errors: error.errors });
-      }
-      console.error("Create hero slide error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  app.put("/api/hero-slides/:id", authenticateAdmin, async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      console.log('Updating hero slide with data:', req.body);
-      
-      // Transform frontend data to match database schema
-      const transformedData: any = {};
-      if (req.body.title !== undefined) transformedData.title = req.body.title;
-      if (req.body.subtitle !== undefined) transformedData.subtitle = req.body.subtitle;
-      if (req.body.description !== undefined) transformedData.description = req.body.description;
-      if (req.body.backgroundImage !== undefined) transformedData.backgroundImage = req.body.backgroundImage;
-      if (req.body.ctaText !== undefined) transformedData.ctaText = req.body.ctaText;
-      if (req.body.ctaLink !== undefined) transformedData.ctaLink = req.body.ctaLink;
-      if (req.body.order !== undefined) transformedData.order = req.body.order;
-      if (req.body.isActive !== undefined) transformedData.published = req.body.isActive;
-      
-      const heroSlide = await storage.updateHeroSlide(id, transformedData);
-      
-      if (!heroSlide) {
-        return res.status(404).json({ message: "Hero slide not found" });
-      }
-      
-      // Transform back to frontend format
-      const responseData = {
-        ...heroSlide,
-        type: req.body.type || 'main',
-        isActive: heroSlide.published,
-      };
-      
-      res.json(responseData);
-    } catch (error) {
-      console.error("Update hero slide error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  app.delete("/api/hero-slides/:id", authenticateAdmin, async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const deleted = await storage.deleteHeroSlide(id);
-      
-      if (!deleted) {
-        return res.status(404).json({ message: "Hero slide not found" });
-      }
-      
-      res.json({ message: "Hero slide deleted successfully" });
-    } catch (error) {
-      console.error("Delete hero slide error:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
+  // (Removed duplicate legacy hero slide routes block)
 
   // Contact routes
   app.get("/api/contacts", authenticateAdmin, async (req: Request, res: Response) => {

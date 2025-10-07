@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
+import { authService } from '@/lib/auth';
 import { 
   Plus,
   Edit,
@@ -22,7 +23,8 @@ import {
   Trophy,
   Handshake,
   Eye,
-  EyeOff
+  EyeOff,
+  Bug
 } from 'lucide-react';
 
 interface HeroSlide {
@@ -77,6 +79,51 @@ export default function HeroSlideManagement() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { logout } = useAuth();
+
+  // Debug functions
+  const runDebugChecks = async () => {
+    console.log('=== DEBUG AUTH STATE ===');
+    const authData = authService.debug();
+    
+    // Test JWT debug endpoint
+    try {
+      const jwtDebug = await fetch('/api/debug/jwt');
+      const jwtData = await jwtDebug.json();
+      console.log('JWT Debug:', jwtData);
+    } catch (error) {
+      console.error('JWT Debug failed:', error);
+    }
+    
+    // Test auth verification
+    if (authData.token) {
+      try {
+        const authTest = await fetch('/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${authData.token}`
+          }
+        });
+        const authResult = await authTest.json();
+        console.log('Auth verification:', authResult);
+      } catch (error) {
+        console.error('Auth verification failed:', error);
+      }
+    }
+    
+    toast({
+      title: "Debug Complete",
+      description: "Check browser console for debug information",
+      variant: "default",
+    });
+  };
+
+  const clearAllAuth = () => {
+    authService.clear();
+    toast({
+      title: "Auth Cleared",
+      description: "All authentication data has been cleared. Please refresh and login again.",
+      variant: "default",
+    });
+  };
 
   // Helper function to handle authentication errors with token refresh
   const handleAuthError = async (error: any, response?: Response) => {
