@@ -5,7 +5,10 @@ services:
     plan: free
     region: oregon
     buildCommand: npm ci && npm run build
-    startCommand: node dist/server/index.js
+  # Run schema push before starting the server so tables exist.
+  # (Idempotent: drizzle-kit push only applies missing objects.)
+  startCommand: npm run start
+  preDeployCommand: npm run db:push
     envVars:
       - key: NODE_ENV
         value: production
@@ -23,7 +26,7 @@ services:
         value: "false"
     healthCheckPath: /health
     autoDeploy: true
-    # preDeployCommand: npm run migrate
+  # Note: 'preDeployCommand' runs before each deploy but not on simple restarts.
 
 databases:
   - name: viet-co-db
