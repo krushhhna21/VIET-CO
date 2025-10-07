@@ -1,5 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { db } from './db';
+import { users } from '@shared/schema';
+import { execSync } from 'child_process';
 import { setupVite, serveStatic, log } from "../client/vite";
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -45,6 +48,28 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Ensure database schema exists (fallback if Render start command skipped migrations)
+  async function ensureSchema() {
+    try {
+      await db.select({ id: users.id }).from(users).limit(1);
+      console.log('[migrate] Schema already present');
+    } catch (err: any) {
+      if (err && err.code === '42P01') { // undefined table
+        console.log('[migrate] Detected missing tables (42P01). Running drizzle-kit push...');
+        try {
+          execSync('npx drizzle-kit push', { stdio: 'inherit' });
+          console.log('[migrate] drizzle-kit push completed');
+        } catch (pushErr) {
+          console.error('[migrate] Failed to push schema:', (pushErr as any)?.message || pushErr);
+        }
+      } else {
+        console.error('[migrate] Unexpected error while checking schema:', err);
+      }
+    }
+  }
+
+  await ensureSchema();
+
   const server = await registerRoutes(app);
 
   // Development setup with Vite
