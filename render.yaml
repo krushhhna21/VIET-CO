@@ -10,7 +10,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        fromDatabase: viet-co-db
+        fromDatabase:
+          name: viet-co-db
+          property: connectionString
       - key: JWT_SECRET
         sync: false
       - key: DEBUG_LOGS
