@@ -1,13 +1,10 @@
-# Render Blueprint for VIET-CO full-stack app (Express + Vite + Postgres)
-# Docs: https://render.com/docs/infrastructure-as-code
-
 services:
   - type: web
     name: viet-co-app
     runtime: node
-    plan: free               # Change to starter/standard for higher resources
-    region: oregon            # Adjust if you want a different region
-  buildCommand: npm ci && npm run build
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
     startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
@@ -15,28 +12,20 @@ services:
       - key: DATABASE_URL
         fromDatabase: viet-co-db
       - key: JWT_SECRET
-        sync: false           # Set manually in dashboard or via 'render env:set'
+        sync: false
       - key: DEBUG_LOGS
-        value: "false"        # Suppress debug logging in production
+        value: "false"
       - key: HOST
         value: 0.0.0.0
     healthCheckPath: /health
     autoDeploy: true
-    # Optional: run migrations before each deploy (uncomment if you remove them from start)
     # preDeployCommand: npm run migrate
 
-# Database provisioned and injected into service
-# You can also import an existing DB instead of provisioning a new one here.
 databases:
   - name: viet-co-db
     plan: free
     region: oregon
 
-# Notes:
-# 1. The build script compiles server (esbuild) + client (Vite) and copies the client build into dist/client.
-# 2. The server serves static assets from dist/client in production (see server/index.ts).
-# 3. JWT_SECRET: set a strong secret (>= 32 chars). Example generation: `openssl rand -base64 48`.
-# 4. Migrations: current start script in package.json runs `db:push` before starting. If you prefer to
-#    separate migrations, add a `migrate` script and use preDeployCommand instead, then edit the start script.
-# 5. If you later split frontend + backend into separate services, remove static serving from server and
-#    deploy a Static Site service pointing to client/ with build `npm install && npm run build:client` and publish dir `client/dist`.
+# Optional documentation (ignored by YAML parser):
+# After creating via Blueprint, set JWT_SECRET manually.
+# Uncomment preDeployCommand once you switch from push to migrations.
