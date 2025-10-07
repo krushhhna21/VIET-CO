@@ -7,7 +7,7 @@ services:
     runtime: node
     plan: free               # Change to starter/standard for higher resources
     region: oregon            # Adjust if you want a different region
-    buildCommand: npm install && npm run build
+  buildCommand: npm ci && npm run build
     startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
@@ -16,6 +16,10 @@ services:
         fromDatabase: viet-co-db
       - key: JWT_SECRET
         sync: false           # Set manually in dashboard or via 'render env:set'
+      - key: DEBUG_LOGS
+        value: "false"        # Suppress debug logging in production
+      - key: HOST
+        value: 0.0.0.0
     healthCheckPath: /health
     autoDeploy: true
     # Optional: run migrations before each deploy (uncomment if you remove them from start)
