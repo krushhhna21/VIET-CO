@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development DEBUG=* tsx server/index.ts",
   "build": "npm run clean && npm run build:client && npm run build:server && npm run copy-client",
   "clean": "node scripts/clean.mjs",
-    "build:client": "cd client && cross-env NODE_ENV=production vite build",
+  "build:client": "cd client && NODE_ENV=production npx vite build",
     "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist/server",
     "copy-client": "node scripts/copy-client.js",
     "start": "npm run db:push && node dist/server/index.js",

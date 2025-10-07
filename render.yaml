@@ -19,6 +19,8 @@ services:
         value: "false"
       - key: HOST
         value: 0.0.0.0
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
     healthCheckPath: /health
     autoDeploy: true
     # preDeployCommand: npm run migrate
