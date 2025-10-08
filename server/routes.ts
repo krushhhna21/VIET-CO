@@ -254,6 +254,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to confirm admin presence (not protected so it can be checked before login)
+  app.get('/api/auth/admin-exists', async (req: Request, res: Response) => {
+    try {
+      const configured = process.env.ADMIN_USERNAME;
+      if (!configured) {
+        return res.json({ configuredUsername: null, exists: false, message: 'ADMIN_USERNAME not configured' });
+      }
+      const userExact = await storage.getUserByUsername(configured);
+      let user = userExact;
+      if (!user && configured !== configured.toLowerCase()) {
+        user = await storage.getUserByUsername(configured.toLowerCase());
+      }
+      return res.json({
+        configuredUsername: configured,
+        exists: !!user,
+        role: user?.role || null,
+        usernameStored: user?.username || null
+      });
+    } catch (err: any) {
+      console.error('[auth] admin-exists error:', err?.message || err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
   app.post("/api/auth/register", async (req: Request, res: Response) => {
     try {
       const userData = insertUserSchema.parse(req.body);
