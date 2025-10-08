@@ -209,21 +209,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
-      const { username, password } = req.body;
+      let { username, password } = req.body as { username?: string; password?: string };
       
       if (!username || !password) {
         return res.status(400).json({ message: "Username and password are required" });
       }
-
-      const user = await storage.getUserByUsername(username);
+      // Preserve original for logs, but attempt fallback lowercase search if not found.
+      const originalUsername = username;
+      const userPrimary = await storage.getUserByUsername(originalUsername);
+      let user = userPrimary;
+      if (!user && originalUsername !== originalUsername.toLowerCase()) {
+        user = await storage.getUserByUsername(originalUsername.toLowerCase());
+      }
       if (!user) {
-        console.log('[auth] Login failed: user not found ->', username);
+        console.log('[auth] Login failed: user not found ->', originalUsername);
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        console.log('[auth] Login failed: bad password for user ->', username);
+        console.log('[auth] Login failed: bad password for user ->', originalUsername);
         return res.status(401).json({ message: "Invalid credentials" });
       }
 

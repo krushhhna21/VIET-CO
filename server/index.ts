@@ -2,6 +2,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { db } from './db';
 import { users } from '@shared/schema';
+import { eq } from 'drizzle-orm';
+import bcrypt from 'bcrypt';
 import { execSync } from 'child_process';
 import { setupVite, serveStatic, log } from "../client/vite";
 import { fileURLToPath } from 'url';
@@ -69,6 +71,40 @@ app.use((req, res, next) => {
   }
 
   await ensureSchema();
+
+  // Ensure an admin user exists (secondary safety net in addition to seed script)
+  async function ensureAdminUser() {
+    const { ADMIN_USERNAME, ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_FORCE } = process.env as Record<string,string|undefined>;
+    if (!ADMIN_USERNAME || !ADMIN_EMAIL || !ADMIN_PASSWORD) {
+      return; // Not configured; skip silently
+    }
+    const usernameExact = ADMIN_USERNAME; // preserve case as provided
+    try {
+      // Try exact match first
+  const existing = await db.select({ id: users.id, role: users.role }).from(users).where(eq(users.username, usernameExact)).limit(1);
+      const force = (ADMIN_FORCE || '').toLowerCase() === 'true';
+      if (existing.length === 0) {
+        const hashed = await bcrypt.hash(ADMIN_PASSWORD, 10);
+        await db.insert(users).values({
+          username: usernameExact,
+          email: ADMIN_EMAIL,
+          password: hashed,
+          role: 'admin'
+        });
+        console.log('[admin-init] Admin user created via startup ensure');
+      } else if (force) {
+        const hashed = await bcrypt.hash(ADMIN_PASSWORD, 10);
+  await db.update(users).set({ password: hashed, email: ADMIN_EMAIL, role: 'admin' }).where(eq(users.username, usernameExact));
+        console.log('[admin-init] Admin user updated via startup ensure (force)');
+      } else {
+        // Exists and no force; nothing to do
+      }
+    } catch (err: any) {
+      console.error('[admin-init] Failed ensuring admin user:', err?.message || err);
+    }
+  }
+
+  await ensureAdminUser();
 
   const server = await registerRoutes(app);
 
